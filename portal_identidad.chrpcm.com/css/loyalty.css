@@ -1,0 +1,1005 @@
+/* ══════════════════════════════════════════════════════════════════════════════
+   PASE DE LEALTAD — Chile Roleplay Community
+   Dark cinematic theme matching banco.css
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.loyalty-page {
+    --ly-bg: #000000;
+    --ly-surface: rgba(12, 20, 38, 0.82);
+    --ly-border: rgba(148, 163, 184, 0.14);
+    --ly-accent: #dc2626;
+    --ly-accent2: #ef4444;
+    --ly-green: #22c55e;
+    --ly-red: #ef4444;
+    --ly-text: #e2e8f0;
+    --ly-text2: #94a3b8;
+    --ly-text3: #64748b;
+    --ly-radius: 14px;
+    --ly-gold: linear-gradient(135deg, #dc2626, #7f1d1d);
+    --ly-premium: linear-gradient(135deg, #dc2626, #7f1d1d);
+}
+
+/* ── Header / Banner ── */
+
+.ly-banner {
+    position: relative;
+    background: linear-gradient(135deg, rgba(220, 38, 38, .12), rgba(220, 38, 38, .12));
+    border: 1px solid var(--ly-border);
+    border-radius: var(--ly-radius);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.ly-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.ly-banner-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.ly-banner-left h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0 0 .25rem;
+    background: var(--ly-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ly-banner-left p {
+    color: var(--ly-text2);
+    font-size: .85rem;
+    margin: 0;
+}
+
+.ly-banner-right {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.ly-stat-pill {
+    background: var(--ly-surface);
+    border: 1px solid var(--ly-border);
+    border-radius: 10px;
+    padding: .6rem 1rem;
+    text-align: center;
+    min-width: 90px;
+}
+
+.ly-stat-pill .ly-stat-val {
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: block;
+}
+
+.ly-stat-pill .ly-stat-lbl {
+    font-size: .68rem;
+    color: var(--ly-text3);
+}
+
+.ly-stat-pill.btc .ly-stat-val {
+    color: #dc2626;
+}
+
+.ly-stat-pill.streak .ly-stat-val {
+    color: #ef4444;
+}
+
+/* ── Tier Badge ── */
+
+.ly-tier-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .35rem .8rem;
+    border-radius: 6px;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.ly-tier-badge.free {
+    background: rgba(220, 38, 38, .12);
+    color: #ef4444;
+}
+
+.ly-tier-badge.premium {
+    background: rgba(220, 38, 38, .15);
+    color: #dc2626;
+}
+
+/* ── Server Status Bar ── */
+
+.ly-server-bar {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+.ly-server-bar.open {
+    background: rgba(34, 197, 94, .1);
+    border: 1px solid rgba(34, 197, 94, .3);
+    color: #4ade80;
+}
+
+.ly-server-bar.closed {
+    background: rgba(239, 68, 68, .1);
+    border: 1px solid rgba(239, 68, 68, .3);
+    color: #f87171;
+}
+
+.ly-server-bar i {
+    font-size: 1rem;
+}
+
+.ly-server-bar .ly-playtime {
+    margin-left: auto;
+    font-weight: 400;
+    font-size: .78rem;
+    color: var(--ly-text2);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   PREMIUM PROMO BANNER
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.ly-premium-promo {
+    position: relative;
+    border-radius: var(--ly-radius);
+    padding: 2px;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #dc2626, #ef4444, #991b1b);
+    overflow: hidden;
+}
+
+.ly-promo-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(220, 38, 38, .2), rgba(239, 68, 68, .2), rgba(153, 27, 27, .2));
+    filter: blur(40px);
+    z-index: 0;
+}
+
+.ly-promo-content {
+    position: relative;
+    z-index: 1;
+    background: rgba(10, 15, 30, .95);
+    border-radius: calc(var(--ly-radius) - 2px);
+    padding: 1.75rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.ly-promo-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    background: linear-gradient(135deg, #dc2626, #7f1d1d);
+    color: #fff;
+    font-size: .65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: .3rem .7rem;
+    border-radius: 5px;
+    margin-bottom: .5rem;
+}
+
+.ly-promo-left h2 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin: 0 0 .4rem;
+}
+
+.ly-promo-left p {
+    color: var(--ly-text2);
+    font-size: .82rem;
+    margin: 0 0 .75rem;
+    max-width: 480px;
+    line-height: 1.5;
+}
+
+.ly-promo-left p strong {
+    color: #ef4444;
+}
+
+.ly-promo-price {
+    display: flex;
+    align-items: baseline;
+    gap: .35rem;
+}
+
+.ly-promo-amount {
+    font-size: 1.8rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ly-promo-period {
+    font-size: .78rem;
+    color: var(--ly-text3);
+}
+
+.ly-promo-buy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: 14px 28px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #7c3aed, #7f1d1d);
+    color: #fff;
+    font-size: .95rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .25s;
+    box-shadow: 0 6px 24px rgba(109, 40, 217, .35);
+}
+
+.ly-promo-buy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(109, 40, 217, .5);
+}
+
+.ly-promo-buy-btn i {
+    font-size: 1.2rem;
+}
+
+/* ── Track Labels ── */
+
+.ly-track-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+    padding: 0 .25rem;
+}
+
+.ly-label-free {
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--ly-text3);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.ly-label-premium {
+    font-size: .72rem;
+    font-weight: 700;
+    color: #a78bfa;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+}
+
+/* ── Days Track (la pista de 7 días) ── */
+
+.ly-track {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .ly-track {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.ly-day-card {
+    background: var(--ly-surface);
+    border: 1px solid var(--ly-border);
+    border-radius: var(--ly-radius);
+    padding: .75rem .6rem;
+    text-align: center;
+    position: relative;
+    transition: all .25s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.ly-day-card:hover {
+    border-color: rgba(220, 38, 38, .4);
+    transform: translateY(-2px);
+}
+
+.ly-day-num {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ly-text3);
+    margin-bottom: .4rem;
+    letter-spacing: .5px;
+}
+
+/* Free reward section */
+
+.ly-day-free {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ly-day-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto .4rem;
+    font-size: 1.2rem;
+}
+
+.ly-day-reward {
+    font-size: .7rem;
+    color: var(--ly-text2);
+    line-height: 1.35;
+    min-height: 2em;
+}
+
+/* Premium reward section dentro de cada card */
+
+.ly-day-premium {
+    margin-top: .5rem;
+    padding-top: .5rem;
+    border-top: 1px dashed rgba(220, 38, 38, .3);
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    justify-content: center;
+}
+
+.ly-day-premium.unlocked {
+    border-top-color: rgba(220, 38, 38, .5);
+}
+
+.ly-crown-icon {
+    font-size: .7rem;
+    color: #dc2626;
+    flex-shrink: 0;
+}
+
+.ly-day-reward-premium {
+    font-size: .65rem;
+    color: #ef4444;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.ly-day-premium.unlocked .ly-day-reward-premium {
+    color: #dc2626;
+}
+
+/* Day states */
+
+.ly-day-card.claimed {
+    border-color: rgba(34, 197, 94, .5);
+}
+
+.ly-day-card.claimed .ly-day-icon {
+    background: rgba(34, 197, 94, .15);
+    color: #22c55e;
+}
+
+.ly-day-card.claimed::after {
+    content: '✓';
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: .7rem;
+    font-weight: 700;
+    color: #22c55e;
+}
+
+.ly-day-card.available {
+    border-color: rgba(220, 38, 38, .5);
+    box-shadow: 0 0 20px rgba(220, 38, 38, .12);
+}
+
+.ly-day-card.available .ly-day-icon {
+    background: rgba(220, 38, 38, .15);
+    color: #dc2626;
+    animation: ly-pulse 2s infinite;
+}
+
+.ly-day-card.locked .ly-day-icon {
+    background: rgba(100, 116, 139, .1);
+    color: #475569;
+}
+
+.ly-day-card.locked {
+    opacity: .5;
+}
+
+.ly-day-card.missed {
+    border-color: rgba(239, 68, 68, .4);
+}
+
+.ly-day-card.missed .ly-day-icon {
+    background: rgba(239, 68, 68, .12);
+    color: #ef4444;
+}
+
+.ly-day-card.missed::after {
+    content: '✗';
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: .7rem;
+    font-weight: 700;
+    color: #ef4444;
+}
+
+.ly-day-card.rescue_available {
+    border-color: rgba(220, 38, 38, .5);
+    box-shadow: 0 0 15px rgba(220, 38, 38, .1);
+}
+
+.ly-day-card.rescue_available .ly-day-icon {
+    background: rgba(220, 38, 38, .15);
+    color: #ef4444;
+}
+
+.ly-day-card.rescue_available::after {
+    content: '🔒';
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: .65rem;
+}
+
+@keyframes ly-pulse {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+/* ── Check-in Button ── */
+
+.ly-checkin-area {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.ly-checkin-btn {
+    padding: 14px 42px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.ly-checkin-btn.active {
+    background: var(--ly-gold);
+    box-shadow: 0 6px 24px rgba(220, 38, 38, .3);
+}
+
+.ly-checkin-btn.active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(220, 38, 38, .4);
+}
+
+.ly-checkin-btn.disabled {
+    background: #334155;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+.ly-checkin-reason {
+    font-size: .78rem;
+    color: var(--ly-text3);
+    margin-top: .5rem;
+}
+
+/* ── Bottom Grid (Bitcoin + Historial) ── */
+
+.ly-bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+@media (max-width: 768px) {
+    .ly-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ly-card {
+    background: var(--ly-surface);
+    border: 1px solid var(--ly-border);
+    border-radius: var(--ly-radius);
+    overflow: hidden;
+}
+
+.ly-card-header {
+    padding: .85rem 1rem;
+    border-bottom: 1px solid var(--ly-border);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--ly-text);
+}
+
+.ly-card-header i {
+    color: var(--ly-accent);
+}
+
+.ly-card-body {
+    padding: 1rem;
+}
+
+/* Bitcoin wallet card */
+
+.ly-btc-balance {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #dc2626;
+    text-align: center;
+    padding: .75rem 0;
+}
+
+.ly-btc-balance small {
+    font-size: .7rem;
+    color: var(--ly-text3);
+    font-weight: 400;
+    display: block;
+    margin-top: .15rem;
+}
+
+/* History list */
+
+.ly-history-item {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .6rem 0;
+    border-bottom: 1px solid rgba(148, 163, 184, .08);
+}
+
+.ly-history-item:last-child {
+    border-bottom: none;
+}
+
+.ly-history-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    flex-shrink: 0;
+}
+
+.ly-history-icon.ingreso {
+    background: rgba(34, 197, 94, .12);
+    color: #22c55e;
+}
+
+.ly-history-icon.gasto {
+    background: rgba(239, 68, 68, .12);
+    color: #ef4444;
+}
+
+.ly-history-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.ly-history-info span {
+    display: block;
+    font-size: .78rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ly-history-info small {
+    font-size: .65rem;
+    color: var(--ly-text3);
+}
+
+/* ── Rescue Modal ── */
+
+.ly-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, .65);
+    align-items: center;
+    justify-content: center;
+}
+
+.ly-modal-overlay.active {
+    display: flex;
+}
+
+.ly-modal {
+    background: #0f172a;
+    border: 1px solid var(--ly-border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    max-width: 400px;
+    width: 92vw;
+}
+
+.ly-modal h3 {
+    margin: 0 0 .75rem;
+    font-size: 1.05rem;
+    color: #dc2626;
+}
+
+.ly-modal p {
+    font-size: .82rem;
+    color: var(--ly-text2);
+    margin-bottom: 1rem;
+}
+
+.ly-modal-btns {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.ly-modal-btns button {
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    font-size: .85rem;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.ly-modal-btns .btn-clp {
+    background: rgba(34, 197, 94, .15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, .3);
+}
+
+.ly-modal-btns .btn-btc {
+    background: rgba(220, 38, 38, .15);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, .3);
+}
+
+.ly-modal-btns .btn-cancel {
+    background: transparent;
+    color: var(--ly-text3);
+    border: 1px solid var(--ly-border);
+}
+
+/* ── Loading ── */
+
+.ly-loading {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--ly-text3);
+}
+
+.ly-loading i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Reward popup ── */
+
+.ly-reward-popup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, .75);
+    align-items: center;
+    justify-content: center;
+}
+
+.ly-reward-popup.active {
+    display: flex;
+}
+
+.ly-reward-popup-inner {
+    background: #0f172a;
+    border: 1px solid rgba(220, 38, 38, .3);
+    border-radius: 18px;
+    padding: 2rem;
+    max-width: 380px;
+    width: 92vw;
+    text-align: center;
+    animation: ly-pop .4s cubic-bezier(.175, .885, .32, 1.1);
+}
+
+@keyframes ly-pop {
+    from {
+        transform: scale(.7);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.ly-reward-popup-inner h2 {
+    font-size: 1.3rem;
+    margin: 0 0 .5rem;
+    color: #dc2626;
+}
+
+.ly-reward-popup-inner .ly-reward-list {
+    margin: 1rem 0;
+    padding: 0;
+}
+
+.ly-reward-popup-inner .ly-reward-list li {
+    list-style: none;
+    padding: .4rem 0;
+    font-size: .9rem;
+    color: var(--ly-text);
+}
+
+.ly-reward-popup-inner button {
+    margin-top: .5rem;
+    padding: 10px 32px;
+    border-radius: 10px;
+    border: none;
+    background: var(--ly-gold);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   OVERLAY WIDGET (mis-datos.html)
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+.ly-overlay {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 9990;
+    background: rgba(0, 0, 0, .6);
+    align-items: center;
+    justify-content: center;
+    animation: ly-overlay-in .3s ease;
+}
+
+@keyframes ly-overlay-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.ly-overlay-card {
+    background: linear-gradient(145deg, #0f172a 60%, #1a0f35);
+    border: 2px solid rgba(220, 38, 38, .3);
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    max-width: 460px;
+    width: 92vw;
+    text-align: center;
+    animation: ly-pop .4s cubic-bezier(.175, .885, .32, 1.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.ly-overlay-card::before {
+    content: '';
+    position: absolute;top: -60px;right: -60px;width: 160px;height: 160px;background: radial-gradient(circle, rgba(220, 38, 38, .15), transparent);border-radius: 50%;}
+
+.ly-overlay-card h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #dc2626;
+    margin: 0 0 .3rem;
+}
+
+.ly-overlay-card p {
+    font-size: .82rem;
+    color: #94a3b8;
+    margin: 0 0 1rem;
+}
+
+.ly-overlay-dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 1.2rem;
+}
+
+.ly-overlay-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 2px solid #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .6rem;
+    font-weight: 700;
+    color: #475569;
+    transition: all .2s;
+}
+
+.ly-overlay-dot.claimed {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: #fff;
+}
+
+.ly-overlay-dot.available {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: #fff;
+    animation: ly-pulse 2s infinite;
+}
+
+.ly-overlay-dot.missed {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #fff;
+}
+
+.ly-overlay-btns {
+    display: flex;
+    gap: .75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.ly-overlay-btn {
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    font-size: .88rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .2s;
+}
+
+.ly-overlay-btn.primary {
+    background: var(--ly-gold);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, .25);
+}
+
+.ly-overlay-btn.primary:hover {
+    transform: translateY(-2px);
+}
+
+.ly-overlay-btn.secondary {
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, .2);
+}
+
+/* ── Widget card en portal grid (mis-datos) ── */
+
+.ly-widget {
+    background: linear-gradient(135deg, rgba(220, 38, 38, .08), rgba(220, 38, 38, .08));
+    border: 1px solid rgba(220, 38, 38, .25);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all .25s;
+    text-decoration: none;
+    display: block;
+    color: var(--ly-text);
+}
+
+.ly-widget:hover {
+    border-color: rgba(220, 38, 38, .5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(220, 38, 38, .12);
+}
+
+.ly-widget-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .6rem;
+}
+
+.ly-widget-title {
+    font-size: .88rem;
+    font-weight: 700;
+    color: #dc2626;
+}
+
+.ly-widget-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.ly-widget-dot {
+    width: 16px;height: 16px;border-radius: 50%;border: 2px solid #334155;display: flex;align-items: center;justify-content: center;font-size: .5rem;color: transparent;transition: all .2s;}
+
+.ly-widget-dot.claimed {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: #fff;
+}
+
+.ly-widget-dot.available {
+    background: #dc2626;
+    border-color: #dc2626;
+    animation: ly-pulse 2s infinite;
+}
+
+.ly-widget-dot.missed {
+    background: #ef4444;
+    border-color: #ef4444;
+}
+
+.ly-widget-btm {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ly-widget-btm span {
+    font-size: .72rem;
+    color: var(--ly-text3);
+}
+
+.ly-widget-btm strong {
+    font-size: .82rem;
+    color: #f59e0b;
+}

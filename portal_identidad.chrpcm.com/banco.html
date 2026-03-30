@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de la Nación | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .bank-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-top: 2rem; }
+        .bank-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 1.5rem; }
+        .balance-amount { font-size: 2.5rem; font-weight: 800; color: var(--primary-accent); margin: 1rem 0; }
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .history-table th { text-align: left; color: var(--text-secondary); padding: 0.75rem; border-bottom: 1px solid var(--border-color); }
+        .history-table td { padding: 0.75rem; border-bottom: 1px solid var(--border-color); }
+        .amount-pos { color: #dc2626; } .amount-neg { color: #ef4444; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+        
+        /* Modal Transferencia */
+        .transfer-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .transfer-card {
+            background: var(--dark-surface); border: 1px solid var(--border-color);
+            padding: 2rem; border-radius: 12px; width: 100%; max-width: 400px;
+        }
+        .transfer-input {
+            width: 100%; padding: 0.8rem; margin: 1rem 0; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color); border-radius: 8px; color: white; outline: none;
+        }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div class="exp-section-title"><i class='bx bxs-bank'></i> Banco de la Nación - Lima</div>
+        <div class="bank-grid">
+            <div class="bank-card">
+                <h3>Mi Balance</h3>
+                <div class="balance-amount" id="balance-display">$ 0</div>
+                <button class="exp-notif-leer-btn" style="width: 100%;" onclick="openTransfer()">Realizar Transferencia</button>
+            </div>
+            <div class="bank-card">
+                <h3>Historial Reciente</h3>
+                <table class="history-table">
+                    <thead><tr><th>Fecha</th><th>Concepto</th><th>Monto</th></tr></thead>
+                    <tbody id="history-body">
+                        <tr><td colspan="3" style="text-align: center;">Sin movimientos</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div></main>
+
+    <div id="transfer-modal" class="transfer-modal">
+        <div class="transfer-card">
+            <h3>Nueva Transferencia</h3>
+            <div style="margin-top: 1.5rem;">
+                <label>Usuario Destinatario</label>
+                <input type="text" id="target-user" class="transfer-input" placeholder="Ej: Juan_Perez">
+                <label>Monto a enviar</label>
+                <input type="number" id="transfer-amount" class="transfer-input" placeholder="0">
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="exp-notif-leer-btn" style="flex: 1;" onclick="closeTransfer()">Cancelar</button>
+                    <button class="auth-btn" style="flex: 1; margin: 0;" onclick="confirmTransfer()">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+                document.getElementById('balance-display').textContent = `$ ${data.balance.toLocaleString()}`;
+                
+                const historyBody = document.getElementById('history-body');
+                if (data.history && data.history.length > 0) {
+                    historyBody.innerHTML = data.history.map(h => `
+                        <tr>
+                            <td>${h.date}</td>
+                            <td>${h.desc}</td>
+                            <td class="${h.amount > 0 ? 'amount-pos' : 'amount-neg'}">${h.amount > 0 ? '+' : ''}$ ${h.amount.toLocaleString()}</td>
+                        </tr>
+                    `).reverse().join('');
+                }
+            }
+        }
+
+        function openTransfer() { document.getElementById('transfer-modal').style.display = 'flex'; }
+        function closeTransfer() { document.getElementById('transfer-modal').style.display = 'none'; }
+
+        async function confirmTransfer() {
+            const target = document.getElementById('target-user').value;
+            const amount = parseInt(document.getElementById('transfer-amount').value);
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+
+            if (!users[target]) return alert('El usuario no existe');
+            if (amount <= 0 || isNaN(amount)) return alert('Monto inválido');
+            if (users[currentUser].balance < amount) return alert('Saldo insuficiente');
+
+            // Procesar transferencia
+            users[currentUser].balance -= amount;
+            users[target].balance += amount;
+
+            const now = new Date().toLocaleDateString();
+            
+            if (!users[currentUser].history) users[currentUser].history = [];
+            if (!users[target].history) users[target].history = [];
+
+            users[currentUser].history.push({ date: now, desc: `Envío a ${target}`, amount: -amount });
+            users[target].history.push({ date: now, desc: `Recibido de ${currentUser}`, amount: amount });
+
+            await Backend.saveUser(currentUser, users[currentUser]);
+            await Backend.saveUser(target, users[target]);
+            
+            // Notificar al destinatario si es posible
+            await Backend.pushNotification(target, {
+                title: 'Transferencia recibida',
+                message: `Has recibido $${amount.toLocaleString()} de ${currentUser}`
+            });
+
+            alert('Transferencia exitosa');
+            closeTransfer();
+            updateUI();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Esperar un poco a que el Backend se inicialice
+            setTimeout(updateUI, 500);
+        });
+    </script>
+</body>
+</html>

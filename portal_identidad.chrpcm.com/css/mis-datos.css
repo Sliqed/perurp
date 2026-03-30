@@ -1,0 +1,2520 @@
+/* --------------------------------------------------------------------------------------------------------------------------------------------------------
+   MIS DATOS / EXPEDIENTE – Chile Roleplay Community
+   Cinematic dark theme – Matching index.html style
+   -------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+@import url('../fonts.googleapis.com/css2.css');
+:root {
+    --exp-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --exp-font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    --exp-bg-base: #000000;
+    --exp-bg-card: rgba(12, 20, 38, 0.78);
+    --exp-bg-card-end: rgba(6, 10, 20, 0.82);
+    --exp-border: rgba(148, 163, 184, 0.14);
+    --exp-border-hover: rgba(220, 38, 38, 0.35);
+    --exp-text: #e2e8f0;
+    --exp-text-secondary: #94a3b8;
+    --exp-text-muted: #64748b;
+    --exp-text-bright: #f8fafc;
+    --exp-accent: #dc2626;
+    --exp-radius: 16px;
+    --exp-radius-sm: 10px;
+    --exp-radius-pill: 999px;
+    --exp-shadow: 0 8px 32px rgba(2, 6, 23, 0.25);
+    --exp-shadow-lg: 0 16px 48px rgba(2, 6, 23, 0.35);
+}
+
+html,
+body.exp-page {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+/* -- Base Reset for this page -- */
+
+body.exp-page {
+    background: var(--exp-bg-base);
+    color: var(--exp-text);
+    font-family: var(--exp-font);
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.exp-main,
+.exp-view,
+.exp-content-grid,
+.exp-docs-layout,
+.exp-cedula-wrapper,
+.exp-section,
+.exp-card,
+.exp-lb-card {
+    min-width: 0;
+    max-width: 100%;
+}
+
+body.exp-page .container {
+    width: min(1240px, 100% - 2rem);
+    margin-inline: auto;
+    padding-inline: 0;
+}
+
+/* -- Background (gradient + noise, no video) -- */
+
+.exp-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.exp-bg-gradient {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 14% 18%, rgba(220, 38, 38, 0.12), transparent 46%), radial-gradient(circle at 78% 10%, rgba(220, 38, 38, 0.18), transparent 44%), radial-gradient(circle at 50% 65%, rgba(220, 38, 38, 0.16), transparent 48%), #000000;
+}
+
+.exp-bg-noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0.14;
+    background-image: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px), radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 100%);
+    mix-blend-mode: soft-light;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   TOPBAR
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    width: 100%;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 16px 34px rgba(2, 6, 23, 0.26);
+    padding-inline: 1rem;
+    background: linear-gradient(180deg, rgba(8, 13, 25, 0.92) 0%, rgba(8, 13, 25, 0.5) 100%);
+    backdrop-filter: blur(14px);
+    transition: background 0.35s ease;
+}
+
+.exp-topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 68px;
+    position: relative;
+}
+
+/* ensure nav and actions sit above brand link so clicks don't fall through */
+
+.exp-nav,
+.exp-top-actions {
+    position: relative;
+    z-index: 35;
+}
+
+.exp-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    color: var(--exp-text-bright);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    font-size: 0.88rem;
+    flex-shrink: 0;
+    padding: 0.3rem 0;
+}
+
+/* branding font */
+
+.exp-brand span {
+    font-family: var(--exp-font);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.exp-brand img {
+    width: auto;
+    height: 48px;
+    object-fit: contain;
+}
+
+/* Nav pills */
+
+.exp-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.28rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(5, 5, 5, 0.68);
+}
+
+.exp-nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: #cbd5e1;
+    font-size: 0.84rem;
+    font-weight: 600;
+    font-family: var(--exp-font);
+    padding: 0.5rem 0.9rem;
+    border-radius: var(--exp-radius-pill);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.exp-nav-item:hover {
+    color: #f8fafc;
+    background: rgba(220, 38, 38, 0.12);
+}
+
+.exp-nav-item.is-active {
+    color: #f8fafc;
+    background: rgba(220, 38, 38, 0.22);
+}
+
+.exp-nav-item i {
+    font-size: 1.05rem;
+}
+
+.exp-nav-item span {
+    white-space: nowrap;
+    text-transform: none;
+    font-family: var(--exp-font);
+}
+
+/* Top actions */
+
+.exp-top-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.exp-action-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(5, 5, 5, 0.6);
+    color: #cbd5e1;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+}
+
+.exp-action-btn:hover {
+    color: #f8fafc;
+    border-color: rgba(220, 38, 38, 0.6);
+}
+
+.exp-action-btn.is-active {
+    background: rgba(220, 38, 38, 0.4);
+    border-color: rgba(220, 38, 38, 0.5);
+    color: #f8fafc;
+}
+
+.exp-logout-btn:hover {
+    border-color: rgba(220, 38, 38, 0.6);
+    color: #fca5a5;
+}
+
+.exp-user-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.35rem 0.85rem 0.35rem 0.35rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    background: rgba(5, 5, 5, 0.5);
+}
+
+.exp-user-pill img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.exp-user-pill span {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--exp-text-bright);
+    white-space: nowrap;
+    font-family: var(--exp-font);
+    letter-spacing: 0.02em;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   MAIN CONTENT
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-main {
+    flex: 1;
+    padding: 1rem 0 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* View toggling */
+
+.exp-view {
+    display: none;
+}
+
+.exp-view.is-active {
+    display: block;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   PROFILE HERO
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-profile-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.2rem;
+    border-radius: 20px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: linear-gradient(165deg, rgba(12, 20, 38, 0.82), rgba(6, 10, 20, 0.85));
+    backdrop-filter: blur(8px);
+    box-shadow: 0 18px 46px rgba(2, 6, 23, 0.35);
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.exp-profile-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(220, 38, 38, 0.08), transparent 60%);
+    pointer-events: none;
+}
+
+.exp-profile-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.exp-avatar-frame {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.exp-avatar-frame img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(220, 38, 38, 0.4);
+    box-shadow: 0 0 24px rgba(220, 38, 38, 0.2);
+}
+
+.exp-status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #64748b;
+    border: 3px solid #000000;
+    transition: background 0.3s ease;
+}
+
+.exp-status-dot.is-linked {
+    background: #dc2626;
+    box-shadow: 0 0 10px #dc2626;
+}
+
+.exp-profile-info h1 {
+    margin: 0;
+    font-family: var(--exp-font);
+    font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--exp-text-bright);
+    line-height: 1.2;
+    font-weight: 800;
+}
+
+.exp-profile-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.5rem;
+}
+
+.exp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.76rem;
+    font-weight: 600;
+    padding: 0.32rem 0.7rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+/* Roblox SVG logo inside badge */
+
+.exp-roblox-logo {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+}
+
+/* Job badge with image logo */
+
+.exp-badge--job {
+    background: rgba(220, 38, 38, 0.22);
+    border: 1px solid rgba(220, 38, 38, 0.35);
+    color: #fecaca;
+}
+
+.exp-badge--job .exp-job-logo {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.exp-badge--rank {
+    background: rgba(220, 38, 38, 0.14);
+    border: 1px solid rgba(220, 38, 38, 0.35);
+    color: #fde68a;
+}
+
+.exp-badge--roblox {
+    background: rgba(220, 38, 38, 0.15);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    color: #fca5a5;
+}
+
+.exp-badge--roblox.is-unlinked {
+    background: rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.3);
+    color: #94a3b8;
+}
+
+.exp-badge--discord {
+    background: rgba(220, 38, 38, 0.15);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    color: #fca5a5;
+}
+
+.exp-badge--discord.is-unlinked {
+    background: rgba(220, 38, 38, 0.2);
+    border-color: rgba(220, 38, 38, 0.3);
+    color: #94a3b8;
+}
+
+.exp-profile-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.exp-level-block {
+    text-align: right;
+}
+
+.exp-level-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-bottom: 0.35rem;
+}
+
+.exp-level-row span {
+    font-size: 0.82rem;
+    color: #94a3b8;
+}
+
+.exp-level-row strong {
+    font-size: 1.3rem;
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.exp-progress-track {
+    width: 160px;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(51, 65, 85, 0.55);
+    overflow: hidden;
+}
+
+.exp-progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #dc2626, #dc2626);
+    transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 0%;
+}
+
+.exp-level-block small {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.exp-clock-block {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--exp-radius-pill);
+    border: 1px solid var(--exp-border);
+    background: rgba(10, 10, 10, 0.55);
+    color: #cbd5e1;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: var(--exp-font);
+}
+
+.exp-clock-block i {
+    color: var(--exp-text-secondary);
+}
+
+/* Date + Clock wrapper */
+
+.exp-datetime-block {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.exp-date-block {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--exp-radius-pill);
+    border: 1px solid var(--exp-border);
+    background: rgba(10, 10, 10, 0.55);
+    color: #cbd5e1;
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: var(--exp-font);
+}
+
+.exp-date-block i {
+    color: var(--exp-text-secondary);
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   STAT CARDS ROW
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-stats-row {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+.exp-stat-card {
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 18px;
+    padding: 0.8rem 0.8rem 0.7rem;
+    background: linear-gradient(165deg, rgba(12, 20, 38, 0.78), rgba(6, 10, 20, 0.82));
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.exp-stat-card:hover {
+    border-color: rgba(220, 38, 38, 0.35);
+    transform: translateY(-2px);
+}
+
+.exp-stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.exp-stat--balance::before {
+    background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 60%);
+}
+
+.exp-stat--vehicles::before {
+    background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 60%);
+}
+
+.exp-stat--tips::before {
+    background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 60%);
+}
+
+.exp-stat-card:hover::before {
+    opacity: 1;
+}
+
+.exp-stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+.exp-stat-header i {
+    font-size: 1.2rem;
+}
+
+.exp-stat--balance .exp-stat-header i {
+    color: #dc2626;
+}
+
+.exp-stat--vehicles .exp-stat-header i {
+    color: #dc2626;
+}
+
+.exp-stat--tips .exp-stat-header i {
+    color: #dc2626;
+}
+
+.exp-stat-value {
+    font-family: var(--exp-font);
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--exp-text-bright);
+    position: relative;
+    z-index: 1;
+    letter-spacing: -0.02em;
+}
+
+.exp-stat-sparkline {
+    height: 25px;
+    opacity: 0.7;
+    position: relative;
+    z-index: 1;
+}
+
+.exp-stat-sparkline svg path:first-child {
+    fill: rgba(220, 38, 38, 0.08);
+    stroke: none;
+}
+
+.exp-stat-sparkline svg path:last-child {
+    fill: none;
+    stroke: #dc2626;
+    stroke-width: 2;
+}
+
+.exp-stat-label {
+    font-size: 0.78rem;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* ensure balance trend label sits below sparkline and never overlaps */
+
+.exp-stat--balance .exp-stat-label {
+    margin-top: 0.35rem;
+    z-index: 2;
+}
+
+/* if needed adjust sparkline layering */
+
+.exp-stat--balance .exp-stat-sparkline {
+    z-index: 1;
+}
+
+.exp-stat-sub {
+    font-size: 0.78rem;
+    color: var(--exp-text-muted);
+    position: relative;
+    z-index: 1;
+}
+
+/* -- Inventory Card (Vehicles + Weapons) -- */
+
+.exp-stat-inventory {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.exp-inv-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex: 1;
+    padding: 0.3rem 0;
+}
+
+.exp-inv-item>i {
+    font-size: 1.5rem;
+    color: #dc2626;
+    opacity: 0.7;
+}
+
+.exp-inv-item:last-child>i {
+    color: #dc2626;
+}
+
+.exp-inv-data {
+    display: flex;
+    flex-direction: column;
+}
+
+.exp-inv-value {
+    font-family: var(--exp-font);
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--exp-text-bright);
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.exp-inv-label {
+    font-size: 0.72rem;
+    color: var(--exp-text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.15rem;
+}
+
+.exp-inv-divider {
+    width: 1px;
+    height: 36px;
+    background: var(--exp-border);
+    margin: 0 0.8rem;
+    flex-shrink: 0;
+}
+
+/* -- Tips Card -- */
+
+.exp-stat--tips {
+    position: relative;
+}
+
+.exp-tip-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    position: relative;
+    z-index: 1;
+    min-height: 48px;
+}
+
+.exp-tip-icon {
+    font-size: 1.2rem;
+    color: #dc2626;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+}
+
+.exp-tip-text {
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--exp-text-secondary);
+    font-weight: 400;
+    transition: opacity 0.2s ease;
+    font-style: italic;
+}
+
+.exp-tip-next {
+    position: absolute;
+    bottom: 0.6rem;
+    right: 0.6rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--exp-border);
+    background: rgba(10, 10, 10, 0.6);
+    color: var(--exp-text-muted);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.exp-tip-next:hover {
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.4);
+    transform: rotate(180deg);
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   CONTENT GRID (Portals + Side)
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-content-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 1.2rem;
+    align-items: start;
+}
+
+/* Section titles */
+
+.exp-section-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
+    letter-spacing: 0.02em;
+}
+
+.exp-section-title i {
+    color: #fecaca;
+    font-size: 1.1rem;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   PORTAL CARDS GRID
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-portal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.exp-portal-card {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.8rem 0.9rem;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(165deg, rgba(12, 20, 38, 0.78), rgba(6, 10, 20, 0.82));
+    backdrop-filter: blur(6px);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.exp-portal-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.15;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+}
+
+.exp-portal-card:hover {
+    border-color: rgba(220, 38, 38, 0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(2, 6, 23, 0.35);
+}
+
+/* Color accents per portal */
+
+.exp-portal--banco {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--banco::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--banco .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--garage {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--garage::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--garage .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--mercado {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--mercado::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--mercado .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--casino {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--casino::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--casino .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.16);
+    border-color: rgba(220, 38, 38, 0.35);
+    box-shadow: inset 0 0 0 1px rgba(220, 38, 38, 0.12);
+}
+
+.exp-portal--casino .exp-portal-icon i {
+    filter: drop-shadow(0 0 6px rgba(220, 38, 38, 0.35));
+}
+
+.exp-portal--misanuncios {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--misanuncios::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--misanuncios .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--tienda {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--tienda::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--tienda .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--concesionario {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--concesionario::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--concesionario .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--empresas {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--empresas::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--empresas .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--escenas {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--escenas::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--escenas .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--entornos {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--entornos::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--entornos .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--municipalidad {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--municipalidad::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--municipalidad .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--empleos {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--empleos::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--empleos .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--mysterybox {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--mysterybox::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--mysterybox .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--blackmarket {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--blackmarket::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--blackmarket .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--kenner {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--kenner::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--kenner .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--ilegal {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--ilegal::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--ilegal .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--ilegal.exp-portal--locked {
+    opacity: 0.45;
+    pointer-events: none;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+}
+
+.exp-portal--ilegal.exp-portal--locked .exp-lock-icon-ilegal {
+    color: #94a3b8;
+    font-size: 1.1rem;
+}
+
+.exp-portal--ilegal.exp-portal--unlocked {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+    filter: none;
+}
+
+.exp-portal--emergencias {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--emergencias::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--emergencias .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--staff {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--staff::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--staff .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--staff.exp-portal--locked {
+    opacity: 0.45;
+    pointer-events: none;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+}
+
+.exp-portal--staff.exp-portal--locked .exp-lock-icon {
+    color: #94a3b8;
+    font-size: 1.1rem;
+}
+
+.exp-portal--staff.exp-portal--unlocked {
+    opacity: 1;
+    pointer-events: auto;
+    cursor: pointer;
+    filter: none;
+}
+
+.exp-portal--staff.exp-portal--unlocked .exp-lock-icon {
+    display: none;
+}
+
+.exp-portal--staff.exp-portal--unlocked .exp-staff-label {
+    color: #4ade80;
+}
+
+.exp-portal--staff.exp-portal--unlocked::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 1.25rem;
+    border: 1px solid;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.exp-portal-text {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+}
+
+.exp-portal-text h3 {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #f8fafc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.exp-portal-text span {
+    display: block;
+    font-size: 0.76rem;
+    color: #94a3b8;
+    margin-top: 0.15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.exp-portal-arrow {
+    font-size: 1.3rem;
+    color: #dc2626;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.exp-portal-card:hover .exp-portal-arrow {
+    color: #f8fafc;
+    transform: translateX(3px);
+}
+
+/* Police portal toggle */
+
+.exp-portal--police {
+    border-left: 3px solid #dc2626;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    width: 100%;
+}
+
+.exp-portal--police::after {
+    background: radial-gradient(circle at top right, #60a5fa 0%, transparent 55%);
+}
+
+.exp-portal--police .exp-portal-icon {
+    color: #60a5fa;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-police-chevron {
+    transition: transform 0.35s ease !important;
+}
+
+.exp-portal--police.is-open .exp-police-chevron {
+    transform: rotate(180deg) !important;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   POLICE EXPANDABLE PANEL
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-police-panel {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin-top: 0;
+    transition: max-height 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease, margin-top 0.35s ease;
+}
+
+.exp-police-panel.is-open {
+    max-height: 320px;
+    opacity: 1;
+    margin-top: 0.85rem;
+}
+
+.exp-police-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.85rem;
+    padding: 1.4rem 1.1rem 1.2rem;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(170deg, rgba(12, 20, 38, 0.82), rgba(6, 10, 20, 0.88));
+    backdrop-filter: blur(6px);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.exp-police-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.12;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+}
+
+.exp-police-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(2, 6, 23, 0.4);
+}
+
+/* Per-institution accents */
+
+.exp-police--aupol {
+    border-top: 3px solid #22c55e;
+}
+
+.exp-police--aupol::after {
+    background: radial-gradient(circle at top center, #22c55e 0%, transparent 60%);
+}
+
+.exp-police--aupol:hover {
+    border-color: rgba(34, 197, 94, 0.5);
+}
+
+.exp-police--gepol {
+    border-top: 3px solid #dc2626;
+}
+
+.exp-police--gepol::after {
+    background: radial-gradient(circle at top center, #dc2626 0%, transparent 60%);
+}
+
+.exp-police--gepol:hover {
+    border-color: rgba(220, 38, 38, 0.5);
+}
+
+.exp-police--snsm {
+    border-top: 3px solid #dc2626;
+}
+
+.exp-police--snsm::after {
+    background: radial-gradient(circle at top center, #dc2626 0%, transparent 60%);
+}
+
+.exp-police--snsm:hover {
+    border-color: rgba(220, 38, 38, 0.5);
+}
+
+/* Logo */
+
+.exp-police-logo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(10, 10, 10, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+}
+
+.exp-police-logo img {
+    width: 46px;
+    height: 46px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* Info */
+
+.exp-police-info {
+    position: relative;
+    z-index: 1;
+}
+
+.exp-police-info h4 {
+    margin: 0;
+    font-family: var(--exp-font);
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--exp-text-bright);
+}
+
+.exp-police-info span {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #fecaca;
+    margin-top: 0.15rem;
+}
+
+.exp-police-info p {
+    margin: 0.4rem 0 0;
+    font-size: 0.74rem;
+    color: #64748b;
+    line-height: 1.45;
+}
+
+.exp-police-card .exp-portal-arrow {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    font-size: 1.1rem;
+    color: #475569;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.exp-police-card:hover .exp-portal-arrow {
+    color: #f8fafc;
+    transform: translateX(3px);
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   SIDE COLUMN (Rankings)
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-side-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Generic card (used by licenses) */
+
+.exp-card {
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 18px;
+    padding: 1.1rem 1.2rem;
+    background: linear-gradient(165deg, rgba(12, 20, 38, 0.78), rgba(6, 10, 20, 0.82));
+    backdrop-filter: blur(6px);
+    position: relative;
+    overflow: hidden;
+}
+
+.exp-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    margin-bottom: 0.75rem;
+}
+
+.exp-card-header h3 {
+    margin: 0;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.exp-card-header h3 i {
+    font-size: 1.05rem;
+    color: #fecaca;
+}
+
+.exp-empty {
+    color: #64748b;
+    font-size: 0.82rem;
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   IDENTIDAD VIEW (Cédula + Licenses)
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-docs-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    /* menos espacio entre tarjetas */
+}
+
+.exp-cedula-wrapper {
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 20px;
+    padding: 1rem;
+    /* más compacto */
+    background: linear-gradient(165deg, rgba(12, 20, 38, 0.78), rgba(6, 10, 20, 0.82));
+    backdrop-filter: blur(6px);
+}
+
+.exp-cedula-wrapper .cedula-container {
+    padding: 0;
+}
+
+/* Licenses */
+
+.exp-card--licenses {
+    min-height: 120px;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------
+   VEHÍCULOS VIEW ADJUSTMENTS
+   --------------------------------------------------------------------------------------------------------------------------------------- */
+
+#view-vehiculos .exp-section {
+    padding: 0.9rem;
+}
+
+#view-vehiculos .exp-section-title {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+}
+
+#view-vehiculos .mv-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-bottom: .7rem;
+}
+
+#view-vehiculos .mv-info-text {
+    margin: 0;
+    font-size: .78rem;
+    color: var(--exp-text-secondary, #94a3b8);
+}
+
+#view-vehiculos .mv-refresh-btn {
+    padding: 5px 12px;
+    font-size: .75rem;
+    font-weight: 600;
+    border: 1px solid var(--exp-border, #334155);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--exp-text-secondary, #94a3b8);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+#view-vehiculos .mv-wear-legend {
+    display: flex;
+    gap: .8rem;
+    flex-wrap: wrap;
+    margin-bottom: .9rem;
+    padding: .5rem .7rem;
+    background: var(--exp-bg, #0f172a);
+    border-radius: 8px;
+    border: 1px solid var(--exp-border, #334155);
+    font-size: .72rem;
+}
+
+#view-vehiculos .mv-wear-legend span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+#view-vehiculos #mv-vehiculos-container {
+    padding: 1rem;
+}
+
+#view-vehiculos .legend-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+#view-vehiculos .mv-empty-state {
+    text-align: center;
+    padding: 1rem;
+    color: var(--exp-text-secondary, #94a3b8);
+}
+
+#view-vehiculos .mv-empty-state i {
+    font-size: 1.6rem;
+    display: block;
+    margin-bottom: .4rem;
+}
+
+.exp-licenses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.exp-license-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    background: rgba(10, 10, 10, 0.45);
+}
+
+.exp-license-info {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.exp-license-info i {
+    font-size: 1.2rem;
+    color: #fecaca;
+}
+
+.exp-license-info span {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.exp-license-status {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+}
+
+.exp-license-status.is-active {
+    background: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.exp-license-status.is-expired {
+    background: rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   STREAMER MODE
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.streamer-mode .sensitive-data {
+    filter: none;
+}
+
+.streamer-mode .sensitive-number {
+    letter-spacing: 0.08em;
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   FOOTER
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-footer {
+    margin-top: auto;
+    border-top: 1px solid rgba(148, 163, 184, 0.22);
+    background: rgba(3, 6, 15, 0.84);
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.exp-footer-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding: 1.5rem 0 2rem;
+}
+
+.exp-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.exp-footer-links a {
+    text-decoration: none;
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 999px;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.8rem;
+    font-family: var(--exp-font);
+    transition: all 0.2s ease;
+}
+
+.exp-footer-links a:hover {
+    color: var(--exp-text-bright);
+    border-color: rgba(220, 38, 38, 0.62);
+}
+
+.exp-footer-note {
+    margin: 0;
+    color: var(--exp-text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.exp-footer-strong {
+    color: var(--exp-text-bright);
+    font-weight: 700;
+}
+
+.exp-footer-watermark {
+    position: absolute;
+    right: 2.2rem;
+    bottom: -18px;
+    opacity: 0.14;
+    pointer-events: none;
+}
+
+.exp-footer-watermark img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 24px rgba(2, 6, 23, 0.5));
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   SKELETON LOADERS
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-skeleton {
+    background: linear-gradient(90deg, rgba(51, 65, 85, 0.3) 0%, rgba(51, 65, 85, 0.5) 50%, rgba(51, 65, 85, 0.3) 100%);
+    background-size: 200% 100%;
+    animation: expShimmer 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+@keyframes expShimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   LEADERBOARD CARDS
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+.exp-lb-card {
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 18px;
+    background: linear-gradient(165deg, rgba(12, 20, 38, 0.82), rgba(6, 10, 20, 0.88));
+    backdrop-filter: blur(8px);
+    overflow: hidden;
+    position: relative;
+}
+
+.exp-lb-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 18px 18px 0 0;
+}
+
+.exp-lb--hours::before {
+    background: linear-gradient(90deg, #dc2626, #dc2626, #dc2626);
+}
+
+.exp-lb--bank::before {
+    background: linear-gradient(90deg, #10b981, #dc2626, #06b6d4);
+}
+
+/* Header */
+
+.exp-lb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.2rem 0.8rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.exp-lb-title {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.exp-lb-title>i {
+    font-size: 1.6rem;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
+.exp-lb--hours .exp-lb-title>i {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.12);
+}
+
+.exp-lb--bank .exp-lb-title>i {
+    color: #10b981;
+    background: rgba(220, 38, 38, 0.12);
+}
+
+.exp-lb-title h3 {
+    font-family: var(--exp-font);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--exp-text-bright);
+    margin: 0;
+    letter-spacing: 0.01em;
+}
+
+.exp-lb-title>div>span {
+    font-size: 0.72rem;
+    color: #64748b;
+    display: block;
+    margin-top: 0.1rem;
+}
+
+/* LIVE indicator */
+
+.exp-lb-live-dot {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #dc2626;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.exp-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #dc2626;
+    animation: lbPulse 1.8s ease-in-out infinite;
+}
+
+.exp-lb-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #dc2626;
+    vertical-align: middle;
+    margin: 0 0.1em;
+    animation: lbPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes lbPulse {
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
+    }
+    50% {
+        opacity: 0.6;
+        box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
+    }
+}
+
+.exp-lb-badge-count {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #10b981;
+    background: rgba(220, 38, 38, 0.1);
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+/* Body */
+
+.exp-lb-body {
+    padding: 0.5rem 0;
+}
+
+.exp-lb-body--scrollable {
+    /* Mostrar aprox. 3 filas y luego usar scroll interno */
+    max-height: 160px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.2) transparent;
+}
+
+.exp-lb-body--scrollable::-webkit-scrollbar {
+    width: 4px;
+}
+
+.exp-lb-body--scrollable::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.exp-lb-body--scrollable::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.25);
+    border-radius: 4px;
+}
+
+/* Loading state */
+
+.exp-lb-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: 2.5rem 1rem;
+    color: #64748b;
+    font-size: 0.82rem;
+}
+
+.exp-lb-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(148, 163, 184, 0.15);
+    border-top-color: #dc2626;
+    border-radius: 50%;
+    animation: lbSpin 0.8s linear infinite;
+}
+
+@keyframes lbSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Empty state */
+
+.exp-lb-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2.5rem 1rem;
+    color: #475569;
+    font-size: 0.82rem;
+}
+
+.exp-lb-empty i {
+    font-size: 2rem;
+    opacity: 0.5;
+}
+
+/* -- Leaderboard Row -- */
+
+.exp-lb-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.55rem 1.2rem;
+    transition: background 0.2s;
+    position: relative;
+}
+
+.exp-lb-row:hover {
+    background: rgba(148, 163, 184, 0.05);
+}
+
+/* TOP 3 special backgrounds */
+
+.exp-lb-row.is-rank-1 {
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.08), transparent);
+}
+
+.exp-lb-row.is-rank-2 {
+    background: linear-gradient(90deg, rgba(148, 163, 184, 0.06), transparent);
+}
+
+.exp-lb-row.is-rank-3 {
+    background: linear-gradient(90deg, rgba(180, 83, 9, 0.06), transparent);
+}
+
+/* Rank number */
+
+.exp-lb-rank {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--exp-font);
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #94a3b8;
+    background: rgba(148, 163, 184, 0.08);
+}
+
+.is-rank-1 .exp-lb-rank {
+    background: linear-gradient(135deg, #dc2626, #d97706);
+    color: #1a1a2e;
+    box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+}
+
+.is-rank-2 .exp-lb-rank {
+    background: linear-gradient(135deg, #94a3b8, #64748b);
+    color: #1a1a2e;
+    box-shadow: 0 0 8px rgba(148, 163, 184, 0.25);
+}
+
+.is-rank-3 .exp-lb-rank {
+    background: linear-gradient(135deg, #b45309, #92400e);
+    color: #fef3c7;
+    box-shadow: 0 0 8px rgba(180, 83, 9, 0.25);
+}
+
+/* Avatar */
+
+.exp-lb-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(148, 163, 184, 0.15);
+    flex-shrink: 0;
+    background: #1e293b;
+}
+
+.is-rank-1 .exp-lb-avatar {
+    border-color: rgba(220, 38, 38, 0.4);
+}
+
+.is-rank-2 .exp-lb-avatar {
+    border-color: rgba(148, 163, 184, 0.3);
+}
+
+.is-rank-3 .exp-lb-avatar {
+    border-color: rgba(180, 83, 9, 0.3);
+}
+
+/* Player info */
+
+.exp-lb-player {
+    flex: 1;
+    min-width: 0;
+}
+
+.exp-lb-name {
+    font-family: var(--exp-font);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.is-rank-1 .exp-lb-name {
+    color: #dc2626;
+}
+
+.exp-lb-sub {
+    font-size: 0.68rem;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Online dot in hours leaderboard */
+
+.exp-lb-online-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    display: inline-block;
+    animation: lbPulse 2s ease-in-out infinite;
+}
+
+/* Value (hours / money) */
+
+.exp-lb-value {
+    font-family: var(--exp-font);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.exp-lb--hours .exp-lb-value {
+    color: #dc2626;
+}
+
+.exp-lb--bank .exp-lb-value {
+    color: #10b981;
+}
+
+.is-rank-1 .exp-lb-value {
+    font-size: 1.05rem;
+}
+
+/* Separator line between rows */
+
+.exp-lb-row+.exp-lb-row {
+    border-top: 1px solid rgba(148, 163, 184, 0.06);
+}
+
+/* ---------------------------------------------------------------------------------------------------------------------------------------------------------
+   RESPONSIVE
+   --------------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+/* Tablet */
+
+@media (max-width: 1050px) {
+    .exp-topbar-inner {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.6rem;
+        padding: 0.6rem 0;
+    }
+    .exp-profile-hero {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .exp-profile-right {
+        align-items: flex-start;
+        flex-direction: row;
+        gap: 1.2rem;
+        width: 100%;
+    }
+    .exp-level-block {
+        text-align: left;
+    }
+    .exp-level-row {
+        justify-content: flex-start;
+    }
+    .exp-progress-track {
+        width: 200px;
+    }
+    .exp-stats-row {
+        grid-template-columns: 1fr 1fr;
+    }
+    .exp-stat--balance {
+        grid-column: span 2;
+    }
+    .exp-content-grid {
+        grid-template-columns: 1fr;
+    }
+    .exp-portal-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .exp-police-panel {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Phone */
+
+@media (max-width: 740px) {
+    .exp-topbar {
+        padding-inline: 0.5rem;
+    }
+    body.exp-page .container {
+        width: calc(100% - 1rem);
+    }
+    .exp-main {
+        padding: 1.2rem 0 2rem;
+    }
+    .exp-brand span {
+        display: none;
+    }
+    .exp-nav-item span {
+        display: none;
+    }
+    .exp-nav-item {
+        padding: 0.5rem 0.7rem;
+    }
+    .exp-user-pill span {
+        display: none;
+    }
+    .exp-user-pill {
+        padding: 0.3rem;
+    }
+    .exp-profile-hero {
+        padding: 1rem 1.1rem;
+        border-radius: 16px;
+    }
+    .exp-avatar-frame img {
+        width: 56px;
+        height: 56px;
+    }
+    .exp-profile-info h1 {
+        font-size: 1.35rem;
+    }
+    .exp-profile-right {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+    .exp-progress-track {
+        width: 100%;
+    }
+    .exp-datetime-block {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.4rem;
+    }
+    .exp-stats-row {
+        grid-template-columns: 1fr;
+    }
+    .exp-stat--balance {
+        grid-column: span 1;
+    }
+    .exp-portal-grid {
+        grid-template-columns: 1fr;
+    }
+    .exp-police-panel {
+        grid-template-columns: 1fr;
+    }
+    .exp-police-panel.is-open {
+        max-height: 900px;
+    }
+    .exp-lb-header {
+        padding: 0.8rem 1rem 0.6rem;
+    }
+    .exp-lb-row {
+        padding: 0.5rem 1rem;
+    }
+    .exp-lb-title h3 {
+        font-size: 0.92rem;
+    }
+    .exp-footer-inner {
+        flex-direction: column;
+        gap: 0.3rem;
+        text-align: center;
+    }
+    .exp-cedula-wrapper {
+        padding: 0.8rem;
+        border-radius: 14px;
+    }
+    .cedula-container {
+        font-size: clamp(8px, 2.25vw, 10.5px);
+    }
+}
+
+/* Very small */
+
+@media (max-width: 380px) {
+    .exp-profile-badges {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .cedula-container {
+        font-size: clamp(7.4px, 2.45vw, 9px);
+    }
+    .exp-stat-value {
+        font-size: 1.6rem;
+    }
+}
+
+/* ══════════════════════════════
+   NOTIFICATION BELL
+   ══════════════════════════════ */
+
+.exp-notif-btn {
+    position: relative;
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.15);
+    color: #94a3b8;
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.3rem;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.exp-notif-btn:hover {
+    background: rgba(220, 38, 38, 0.15);
+    color: #dc2626;
+}
+
+.exp-notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid #0b1120;
+    animation: expNotifPulse 1.5s infinite;
+}
+
+@keyframes expNotifPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0);
+    }
+}
+
+/* ══════════════════════════════
+   NOTIF MODAL (reutiliza clases banco)
+   ══════════════════════════════ */
+
+.bnk-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 8, 18, 0.92);
+    backdrop-filter: blur(16px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 1000;
+    padding: 0;
+    animation: expFadeIn 0.2s ease;
+}
+
+@media (min-width: 640px) {
+    .bnk-modal-overlay {
+        align-items: center;
+        padding: 1rem;
+    }
+}
+
+.bnk-modal-overlay.hidden {
+    display: none;
+}
+
+.bnk-modal {
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.97) 0%, rgba(10, 16, 30, 0.98) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-top: 2px solid transparent;
+    border-image: linear-gradient(90deg, #dc2626, #dc2626, #dc2626) 1;
+    border-image-slice: 1 1 0 1;
+    border-radius: 20px 20px 0 0;
+    padding: 0;
+    width: 100%;
+    max-width: 480px;
+    color: #e2e8f0;
+    box-shadow: 0 -10px 60px rgba(0, 0, 0, 0.4);
+    animation: expSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    max-height: 92vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(220, 38, 38, 0.3) transparent;
+}
+
+@media (min-width: 640px) {
+    .bnk-modal {
+        border-radius: 22px;
+        animation: expModalPop 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+}
+
+@keyframes expFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes expSlideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes expModalPop {
+    from {
+        transform: translateY(30px) scale(0.97);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.bnk-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.4rem 1.8rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, rgba(10, 10, 10, 0.98) 60%, rgba(10, 10, 10, 0.92) 100%);
+    backdrop-filter: blur(8px);
+}
+
+.bnk-modal-head h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bnk-modal-head h3 i {
+    color: #dc2626;
+    font-size: 1.2rem;
+}
+
+.close-modal-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: #64748b;
+    font-size: 1.15rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: grid;
+    place-items: center;
+}
+
+.close-modal-btn:hover {
+    background: rgba(220, 38, 38, 0.1);
+    border-color: rgba(220, 38, 38, 0.2);
+    color: #f87171;
+}
+
+.bnk-notificaciones-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 1rem 1.4rem;
+}
+
+.bnk-notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    transition: all 0.2s;
+}
+
+.bnk-notif-item.unread {
+    background: rgba(220, 38, 38, 0.04);
+    border-color: rgba(220, 38, 38, 0.15);
+}
+
+.bnk-notif-item i {
+    font-size: 1.2rem;
+    color: #dc2626;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.bnk-notif-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.bnk-notif-body span {
+    color: #e2e8f0;
+    font-size: 0.85rem;
+}
+
+.bnk-notif-body small {
+    color: #64748b;
+    font-size: 0.72rem;
+}
+
+.bnk-tx-empty {
+    color: #475569;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.exp-notif-leer-btn {
+    display: block;
+    width: calc(100% - 2.8rem);
+    margin: 0 1.4rem 1.4rem;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    color: #fca5a5;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.exp-notif-leer-btn:hover {
+    background: rgba(220, 38, 38, 0.2);
+    color: #c7d2fe;
+}

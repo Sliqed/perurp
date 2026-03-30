@@ -1,0 +1,337 @@
+/* public/css/cedula.css - Ajuste visual cédula */
+
+@import url('../fonts.googleapis.com/css2-0341033cbe2fc.css');
+:root {
+    --cedula-ratio: 85.6 / 53.98;
+    --cedula-bg: #e9edf4;
+    --cedula-blue: #dc2626;
+    --cedula-blue-soft: #ef4444;
+    --cedula-black: #1f2937;
+}
+
+/* Contenedor externo */
+
+.cedula-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0.35rem 0;
+    font-size: clamp(9px, 0.78vw, 12px);
+}
+
+/* Tarjeta principal */
+
+.cedula {
+    position: relative;
+    width: 40em;
+    max-width: 100%;
+    aspect-ratio: var(--cedula-ratio);
+    background-color: var(--cedula-bg);
+    border-radius: 1.05em;
+    overflow: hidden;
+    font-family: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3);
+    color: var(--cedula-black) !important;
+    border: 1px solid rgba(13, 79, 164, 0.17);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Fondo con trama real + velo suave para legibilidad */
+
+.cedula-bg {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(212, 225, 241, 0.16)), url('https://i.imgur.com/7m5O4BY.jpeg');
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.cedula-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: 1.05em 1.5em 1.15em 1.6em;
+}
+
+/* Encabezado nacional */
+
+.header-top-republica {
+    position: absolute;
+    top: 0.72em;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-top-republica strong {
+    font-family: 'Montserrat', 'Arial Black', sans-serif;
+    font-size: 1.03em;
+    color: var(--cedula-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.header-top-republica span {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 0.47em;
+    color: var(--cedula-blue-soft);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 0.2em;
+    letter-spacing: 0.04em;
+    line-height: 1;
+}
+
+/* Título lateral izquierdo */
+
+.header-left-title {
+    position: absolute;
+    top: 0.55em;
+    left: 1.55em;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.txt-cedula,
+.txt-identidad {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 0.81em;
+    font-weight: 800;
+    color: var(--cedula-blue) !important;
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: 0.01em;
+}
+
+.row-identidad {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    line-height: 1;
+    margin-top: 0.02em;
+}
+
+.flag-icon {
+    height: 1.26em;
+    width: auto;
+    display: block;
+    border-radius: 1px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+    margin-top: -0.7em;
+}
+
+/* Cuerpo de tarjeta */
+
+.cedula-body-layout {
+    margin-top: 3.95em;
+    display: flex;
+    height: 11.8em;
+    position: relative;
+}
+
+.photo-area {
+    width: 9.2em;
+    flex-shrink: 0;
+    margin-right: 1.35em;
+}
+
+.photo-frame {
+    width: 100%;
+    height: 100%;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+}
+
+.cedula-photo-main {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+    filter: contrast(1.07) saturate(0.9);
+}
+
+.data-area-grid {
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: 1.44fr 1fr;
+    grid-template-rows: repeat(5, auto);
+    row-gap: 0.6em;
+    column-gap: 1.1em;
+    position: relative;
+    z-index: 2;
+    margin-top: 0.02em;
+}
+
+.data-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.data-item label {
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 0.5em;
+    font-weight: 700;
+    color: var(--cedula-blue-soft);
+    text-transform: uppercase;
+    margin-bottom: 0.08em;
+    line-height: 1;
+    letter-spacing: 0.04em;
+}
+
+.data-value {
+    font-size: 1.03em;
+    font-weight: 700;
+    color: var(--cedula-black) !important;
+    text-transform: uppercase;
+    line-height: 1.02;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+}
+
+.ghost-photo-wrapper {
+    position: absolute;
+    top: 4.35em;
+    right: 37%;
+    width: 3.9em;
+    height: 4.95em;
+    z-index: 0;
+    opacity: 0.31;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+}
+
+.ghost-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    filter: grayscale(100%);
+}
+
+/* Pie de tarjeta */
+
+.bottom-run {
+    position: absolute;
+    top: 19.05em;
+    left: 1.65em;
+}
+
+.bottom-run label {
+    display: block;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 0.52em;
+    font-weight: 700;
+    color: var(--cedula-blue-soft);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.17em;
+}
+
+.bottom-run span {
+    display: block;
+    font-size: 1.26em;
+    font-weight: 700;
+    color: var(--cedula-black) !important;
+    letter-spacing: 0.06em;
+    font-family: 'Barlow Condensed', 'Courier New', monospace;
+}
+
+.bottom-firma {
+    position: absolute;
+    top: 19.05em;
+    left: 12.85em;
+    text-align: left;
+    width: 7.6em;
+}
+
+.bottom-firma label {
+    display: block;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-size: 0.49em;
+    font-weight: 700;
+    color: var(--cedula-blue-soft);
+    margin-bottom: 0.33em;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.firma-font {
+    font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;
+    font-size: 1.42em;
+    color: #2a2a2a !important;
+    line-height: 0.74;
+    font-weight: 500;
+}
+
+/* Código vertical derecho */
+
+.vertical-code {
+    position: absolute;
+    right: 0.65em;
+    top: 49%;
+    transform: translateY(-50%) rotate(180deg);
+    writing-mode: vertical-rl;
+}
+
+.vertical-code span {
+    font-family: 'Barlow Condensed', 'Courier New', monospace;
+    font-size: 0.58em;
+    color: rgba(37, 56, 87, 0.86);
+    letter-spacing: 0.13em;
+}
+
+@media (max-width: 740px) {
+    .cedula-container {
+        font-size: clamp(8px, 2.25vw, 10.5px);
+    }
+    .cedula {
+        width: 41em;
+    }
+}
+
+/* Botón actualizar foto */
+
+.btn-update-photo {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 6px 14px;
+    background: rgba(220, 38, 38, 0.15);
+    color: #ef4444;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.btn-update-photo:hover:not(:disabled) {
+    background: rgba(220, 38, 38, 0.25);
+    border-color: rgba(220, 38, 38, 0.5);
+    transform: translateY(-1px);
+}
+
+.btn-update-photo:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-update-photo i {
+    font-size: 1.1rem;
+}

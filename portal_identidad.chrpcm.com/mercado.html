@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado de Lima | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .market-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 1.25rem; }
+        .market-price { color: #dc2626; font-weight: 800; font-size: 1.25rem; }
+        .market-img { width: 100%; height: 150px; background: rgba(220, 38, 38, 0.05); border-radius: 8px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--text-secondary); }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+    </style>
+</head>
+<body class="exp-page">
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div class="exp-section-title"><i class='bx bxs-store-alt'></i> Mercado de Artículos Usados</div>
+        <div class="market-grid">
+            <div class="market-card">
+                <div class="market-img"><i class='bx bx-mobile-alt'></i></div>
+                <h4>iPhone 15 Pro</h4>
+                <p>Casi nuevo, liberado para Claro/Movistar.</p>
+                <div class="market-price">$ 4,500</div>
+                <button class="exp-notif-leer-btn" style="width: 100%; margin-top: 1rem;">Comprar</button>
+            </div>
+            <div class="market-card">
+                <div class="market-img"><i class='bx bx-joystick'></i></div>
+                <h4>PlayStation 5</h4>
+                <p>Edición digital con 2 mandos.</p>
+                <div class="market-price">$ 2,800</div>
+                <button class="exp-notif-leer-btn" style="width: 100%; margin-top: 1rem;">Comprar</button>
+            </div>
+            <div class="market-card">
+                <div class="market-img"><i class='bx bx-camera'></i></div>
+                <h4>Cámara Sony Alpha</h4>
+                <p>Perfecta para fotógrafos de prensa.</p>
+                <div class="market-price">$ 3,200</div>
+                <button class="exp-notif-leer-btn" style="width: 100%; margin-top: 1rem;">Comprar</button>
+            </div>
+        </div>
+    </div></main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('header-name').textContent = localStorage.getItem('userName') || 'Ciudadano';
+        });
+    </script>
+</body>
+</html>

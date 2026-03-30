@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Pertenencias | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .pertenencias-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .item-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 1.25rem; }
+        .item-card h4 { color: var(--primary-accent); font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .item-card p { color: var(--text-secondary); font-size: 0.85rem; }
+        .item-icon { font-size: 2.5rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg" aria-hidden="true">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div class="exp-section-title"><i class='bx bxs-car-garage'></i> Mis Pertenencias - Inventario Global</div>
+        <div class="pertenencias-grid">
+            <div class="item-card">
+                <div class="item-icon"><i class='bx bxs-car'></i></div>
+                <h4>Toyota Hilux 2024</h4>
+                <p>Placa: PE-1234<br>Estado: Excelente<br>Ubicación: Garaje Central</p>
+            </div>
+            <div class="item-card">
+                <div class="item-icon"><i class='bx bxs-home'></i></div>
+                <h4>Departamento Miraflores</h4>
+                <p>Dirección: Av. Larco 456<br>Estado: Pagado<br>Impuestos: Al día</p>
+            </div>
+            <div class="item-card">
+                <div class="item-icon"><i class='bx bxs-bolt-circle'></i></div>
+                <h4>Licencia de Conducir</h4>
+                <p>Tipo: A-I Profesional<br>Vencimiento: 12/2026<br>Estado: Activa</p>
+            </div>
+        </div>
+    </div></main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('header-name').textContent = localStorage.getItem('userName') || 'Ciudadano';
+        });
+    </script>
+</body>
+</html>

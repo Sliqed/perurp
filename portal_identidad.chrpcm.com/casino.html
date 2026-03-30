@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino Royale | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="./fonts.googleapis.com/css2.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .casino-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .casino-card {
+            background: var(--dark-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--exp-radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .casino-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-accent);
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.15);
+        }
+
+        .casino-icon {
+            font-size: 3rem;
+            color: var(--primary-accent);
+            margin-bottom: 1rem;
+        }
+
+        .casino-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--exp-text-bright);
+        }
+
+        .casino-card p {
+            color: var(--exp-text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .casino-btn {
+            background: var(--primary-accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--exp-radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .casino-btn:hover {
+            background: var(--primary-accent-hover);
+        }
+
+        .casino-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc2626;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--exp-text-secondary);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-accent);
+        }
+    </style>
+</head>
+
+<body class="exp-page">
+
+    <!-- BG -->
+    <div class="exp-bg" aria-hidden="true">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.15), transparent 50%), radial-gradient(circle at bottom left, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+        <div class="exp-bg-noise"></div>
+    </div>
+
+    <!-- --- TOPBAR --- -->
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html">
+                <img src="./img/logoperurp.png" alt="Logo Peru RP" onerror="this.src='https://i.imgur.com/3mRhMBw.png'">
+                <span>Peru Roleplay Community</span>
+            </a>
+            <div class="exp-top-actions">
+                <div class="exp-user-pill">
+                    <img id="header-avatar" src="https://i.imgur.com/3mRhMBw.png" alt="">
+                    <span id="header-name" class="sensitive-data">Cargando...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="exp-main">
+        <div class="container">
+            <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver al Expediente</a>
+            
+            <div class="exp-section-title">
+                <i class='bx bxs-diamond'></i> Gran Casino Royale - Lima
+            </div>
+            
+            <p style="color: var(--exp-text-secondary); margin-bottom: 2rem;">Bienvenido al casino más exclusivo de Perú RP. Prueba tu suerte en nuestros juegos y gana grandes premios en efectivo.</p>
+
+            <div class="casino-grid">
+                <!-- Ruleta -->
+                <div class="casino-card">
+                    <div class="casino-badge">Popular</div>
+                    <div class="casino-icon"><i class='bx bx-loader-circle'></i></div>
+                    <h3>Ruleta Europea</h3>
+                    <p>Apuesta a tus números favoritos y multiplica tu dinero x36.</p>
+                    <button class="casino-btn" onclick="playGame('Ruleta')">Jugar Ahora</button>
+                </div>
+
+                <!-- Blackjack -->
+                <div class="casino-card">
+                    <div class="casino-icon"><i class='bx bxs-cards'></i></div>
+                    <h3>Blackjack 21</h3>
+                    <p>Vence al crupier sin pasarte de 21. El clásico juego de cartas.</p>
+                    <button class="casino-btn" onclick="playGame('Blackjack')">Jugar Ahora</button>
+                </div>
+
+                <!-- Tragamonedas -->
+                <div class="casino-card">
+                    <div class="casino-icon"><i class='bx bxs-invader'></i></div>
+                    <h3>Tragamonedas</h3>
+                    <p>Consigue 3 símbolos iguales y llévate el Jackpot acumulado.</p>
+                    <button class="casino-btn" onclick="playGame('Tragamonedas')">Girar</button>
+                </div>
+            </div>
+
+            <div class="exp-card" style="margin-top: 2rem;">
+                <div class="exp-card-header">
+                    <h3><i class='bx bx-history'></i> Últimos Ganadores</h3>
+                </div>
+                <div class="exp-lb-body" style="padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                        <span>Juan_Perez</span>
+                        <span style="color: #dc2626; font-weight: 700;">+$ 50,000</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                        <span>Maria_Rodriguez</span>
+                        <span style="color: #dc2626; font-weight: 700;">+$ 12,500</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span>Carlos_Gomez</span>
+                        <span style="color: #dc2626; font-weight: 700;">+$ 2,000</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="exp-footer">
+        <div class="container exp-footer-shell">
+            <p class="exp-footer-note">Gran Casino Royale © 2026 - Juega con responsabilidad.</p>
+        </div>
+        <div class="exp-footer-watermark" aria-hidden="true">
+            <img src="./img/logoperurp.png" alt="" onerror="this.src='https://i.imgur.com/3mRhMBw.png'">
+        </div>
+    </footer>
+
+    <script src="./js/global.js"></script>
+    <script>
+        function playGame(game) {
+            alert('¡El juego de ' + game + ' se abrirá pronto dentro del servidor! Por ahora, sigue acumulando dinero en tu cuenta.');
+        }
+
+        // Cargar nombre de usuario si existe en localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const name = localStorage.getItem('userName') || 'Ciudadano';
+            const nameEl = document.getElementById('header-name');
+            if (nameEl) nameEl.textContent = name;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Expediente | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="./fonts.googleapis.com/css2.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/cedula.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <link rel="stylesheet" href="./css/historia-personaje.css">
+    <link rel="stylesheet" href="./css/loyalty.css">
+</head>
+
+<body class="exp-page">
+
+
+    <!-- BG -->
+    <div class="exp-bg" aria-hidden="true">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%), radial-gradient(circle at bottom left, rgba(220, 38, 38, 0.05), transparent 50%);"></div>
+        <div class="exp-bg-noise"></div>
+    </div>
+
+    <!-- --- TOPBAR --- -->
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html">
+                <img src="./img/logoperurp.png" alt="Logo Peru RP" onerror="this.src='https://i.imgur.com/3mRhMBw.png'">
+                <span>Peru Roleplay Community</span>
+            </a>
+            <nav class="exp-nav" id="exp-nav">
+                <button type="button" class="exp-nav-item is-active" data-view="resumen"><i class='bx bxs-dashboard'></i><span>Mi Perfil</span></button>
+                <button type="button" class="exp-nav-item" data-view="identidad"><i class='bx bxs-id-card'></i><span>Identidad</span></button>
+            </nav>
+
+            <div class="exp-top-actions">
+                <div class="exp-user-pill">
+                    <img id="header-avatar" src="https://i.imgur.com/3mRhMBw.png" alt="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                    <span id="header-name" style="font-weight: 700; color: white;">Cargando...</span>
+                </div>
+                <button onclick="handleLogout()" class="exp-action-btn exp-logout-btn" title="Cerrar sesión">
+                        <i class='bx bx-log-out'></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+    <script>
+        // Protección de ruta
+        if (!localStorage.getItem('currentUser')) {
+            window.location.href = './auth.html';
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = './auth.html';
+        }
+    </script>
+
+    <main class="exp-main">
+        <div class="container">
+
+            <!-- --- VISTA RESUMEN --- -->
+            <section id="view-resumen" class="exp-view is-active">
+
+                <!-- Profile Hero Simplified -->
+                <div class="exp-profile-hero" style="padding: 2rem; display: flex; align-items: center; justify-content: space-between; background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); margin-bottom: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 2rem;">
+                        <div class="exp-avatar-frame" id="avatar-container" style="cursor: pointer; width: 100px; height: 100px;" title="Cambiar foto de perfil">
+                            <img id="profile-avatar" src="https://i.imgur.com/3mRhMBw.png" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-accent);">
+                        </div>
+                        <div class="exp-profile-info">
+                            <h1 id="profile-name" style="font-size: 2.5rem; margin: 0; color: white;">Cargando...</h1>
+                            <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                                <span class="exp-badge" id="profile-rank" style="background: var(--primary-accent); color: white; padding: 4px 12px; border-radius: 4px; font-weight: 800; font-size: 0.8rem;">CIUDADANO</span>
+                                <span id="profile-job" style="color: var(--text-secondary); display: flex; align-items: center; gap: 5px; font-weight: 600;"><i class='bx bxs-briefcase'></i> Civil</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 3rem; text-align: right;">
+                        <div class="exp-stat-item">
+                            <span style="display: block; font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Dinero en Cuenta</span>
+                            <strong id="finance-balance" style="font-size: 2rem; color: #dc2626;">$ 0</strong>
+                        </div>
+                        <div class="exp-stat-item">
+                            <span style="display: block; font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Nivel Ciudadano</span>
+                            <strong id="citizen-level" style="font-size: 2rem; color: var(--primary-accent);">1</strong>
+                            <div class="exp-progress-track" style="width: 100px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 5px; overflow: hidden;">
+                                <div class="exp-progress-fill" id="level-fill" style="width: 0%; height: 100%; background: var(--primary-accent);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advice Row (Keeping only tips here) -->
+                <div class="exp-stat-card exp-stat--tips" style="margin-bottom: 2rem; width: 100%;">
+                    <div class="exp-stat-header">
+                        <span>Consejo del día</span>
+                        <i class='bx bxs-bulb'></i>
+                    </div>
+                    <div class="exp-tip-content">
+                        <i class='bx bx-info-circle exp-tip-icon'></i>
+                        <p class="exp-tip-text" id="tip-text">Cargando consejo...</p>
+                    </div>
+                    <button type="button" class="exp-tip-next" id="tip-next-btn" title="Siguiente consejo">
+                        <i class='bx bx-refresh'></i>
+                    </button>
+                </div>
+
+                <!-- Portals Grid + Alerts & Garage -->
+                <div class="exp-content-grid">
+
+                    <!-- Quick Access Portals -->
+                    <div class="exp-section">
+                        <div class="exp-section-title">
+                            <i class='bx bx-grid-alt'></i> Accesos Rápidos
+                        </div>
+                        <div class="exp-portal-grid">
+                            <a href="./banco.html" class="exp-portal-card exp-portal--banco">
+                                <div class="exp-portal-icon"><i class='bx bxs-bank'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Banco Central</h3>
+                                    <span>Saldo, transferencias e historial</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./mis-pertenencias.html" class="exp-portal-card exp-portal--garage">
+                                <div class="exp-portal-icon"><i class='bx bxs-car-garage'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Mis Pertenencias</h3>
+                                    <span>Vehículos y propiedades</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./mercado.html" class="exp-portal-card exp-portal--mercado">
+                                <div class="exp-portal-icon"><i class='bx bxs-store-alt'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Mercado</h3>
+                                    <span>Compra y vende artículos</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./casino.html" class="exp-portal-card exp-portal--casino">
+                                <div class="exp-portal-icon"><i class='bx bxs-diamond'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Casino</h3>
+                                    <span>Juega y gana premios</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./tienda.html" class="exp-portal-card exp-portal--tienda">
+                                <div class="exp-portal-icon"><i class='bx bxs-shopping-bag'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Tienda</h3>
+                                    <span>Artículos premium y extras</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./concesionario.html" class="exp-portal-card exp-portal--concesionario">
+                                <div class="exp-portal-icon"><i class='bx bxs-car'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Concesionario</h3>
+                                    <span>Vehículos disponibles</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./empresas.html" class="exp-portal-card exp-portal--empresas">
+                                <div class="exp-portal-icon"><i class='bx bxs-buildings'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Empresas</h3>
+                                    <span>Gestión empresarial</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./escenas.html" class="exp-portal-card exp-portal--escenas">
+                                <div class="exp-portal-icon"><i class='bx bxs-video-recording'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Escenas de Rol</h3>
+                                    <span>Chat IC en vivo por escenarios</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./entornos.html" class="exp-portal-card exp-portal--entornos">
+                                <div class="exp-portal-icon"><i class='bx bxs-cctv'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Entornos RP</h3>
+                                    <span>Avistamientos y registros de roleplay</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./mysterybox.html" class="exp-portal-card exp-portal--mysterybox">
+                                <div class="exp-portal-icon"><i class='bx bxs-gift'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Mystery Box</h3>
+                                    <span>Abre cajas y gana premios</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./municipalidad.html" class="exp-portal-card exp-portal--municipalidad">
+                                <div class="exp-portal-icon"><i class='bx bxs-landmark'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Municipalidad</h3>
+                                    <span>Trámites y gestión municipal</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="" class="exp-portal-card exp-portal--empleos">
+                                <div class="exp-portal-icon"><i class='bx bx-briefcase-alt-2'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Centro de Empleos</h3>
+                                    <span>¡En actualizacion!</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./blackmarket.html" class="exp-portal-card exp-portal--blackmarket">
+                                <div class="exp-portal-icon"><i class='bx bxs-skull'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Mercado Negro</h3>
+                                    <span>Artículos ilegales y narcotráfico</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./kenner.html" class="exp-portal-card exp-portal--kenner">
+                                <div class="exp-portal-icon"><i class='bx bxs-wrench'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Taller Kenner</h3>
+                                    <span>Panel mecánico y presupuestos</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./desguace.html" class="exp-portal-card exp-portal--desguace">
+                                <div class="exp-portal-icon"><i class='bx bxs-car-garage'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Robo de Vehículos</h3>
+                                    <span>Desguace y desmantelamiento</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./mecanico-ilegal.html" class="exp-portal-card exp-portal--ilegal exp-portal--locked" id="mecanico-ilegal-card">
+                                <div class="exp-portal-icon"><i class='bx bxs-car-crash'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>El Desguace</h3>
+                                    <span class="exp-ilegal-label">Solo mecánicos ilegales</span>
+                                </div>
+                                <i class='bx bxs-lock-alt exp-portal-arrow exp-lock-icon-ilegal'></i>
+                            </a>
+                            <a href="./911.html" class="exp-portal-card exp-portal--emergencias">
+                                <div class="exp-portal-icon"><i class='bx bxs-phone-call'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Emergencias 911</h3>
+                                    <span>Llamadas de emergencia y asistencia</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./admin.html" class="exp-portal-card exp-portal--staff exp-portal--locked" id="staff-panel-card">
+                                <div class="exp-portal-icon"><i class='bx bxs-crown'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Panel de Staff</h3>
+                                    <span class="exp-staff-label" id="staff-label-text">Solo personal autorizado</span>
+                                </div>
+                                <i class='bx bxs-lock-alt exp-portal-arrow exp-lock-icon' id="staff-lock-icon"></i>
+                            </a>
+                            <button type="button" class="exp-portal-card exp-portal--police" id="police-toggle-btn">
+                                <div class="exp-portal-icon"><i class='bx bxs-shield-alt-2'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>Portales Policiales</h3>
+                                    <span>AUPOL • GEPOL • SNSM</span>
+                                </div>
+                                <i class='bx bx-chevron-down exp-portal-arrow exp-police-chevron'></i>
+                            </button>
+                        </div>
+
+                        <!-- Police Sub-cards (expandable) -->
+                        <div class="exp-police-panel" id="police-panel">
+                            <a href="./portal-policial.html" class="exp-police-card exp-police--aupol">
+                                <div class="exp-police-logo">
+                                    <img src="img/logos/logocarabineros.png" alt="Carabineros de Chile">
+                                </div>
+                                <div class="exp-police-info">
+                                    <h4>AUPOL</h4>
+                                    <span>Carabineros de Chile</span>
+                                    <p>Automatización policial, reportes y patrullaje.</p>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./portal-pdi.html" class="exp-police-card exp-police--gepol">
+                                <div class="exp-police-logo">
+                                    <img src="img/logos/logopdi.png" alt="PDI">
+                                </div>
+                                <div class="exp-police-info">
+                                    <h4>GEPOL</h4>
+                                    <span>Policía de Investigaciones</span>
+                                    <p>Gestión policial, investigaciones y operativos.</p>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./municipalidad.html" class="exp-police-card exp-police--snsm">
+                                <div class="exp-police-logo">
+                                    <img src="img/logos/logo1414.webp" alt="Seguridad Municipal">
+                                </div>
+                                <div class="exp-police-info">
+                                    <h4>SNSM</h4>
+                                    <span>Seguridad Municipal Providencia</span>
+                                    <p>Sistema Nacional de Seguridad Municipal.</p>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- --- VISTA IDENTIDAD --- -->
+            <section id="view-identidad" class="exp-view">
+                <div class="exp-docs-layout">
+
+                    <!-- Cédula -->
+                    <div class="exp-cedula-wrapper">
+                        <div class="exp-section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div><i class='bx bx-id-card'></i> Cédula de Identidad</div>
+                            <div id="btn-actualizar-foto-container"></div>
+                        </div>
+                        <div class="cedula-container">
+                            <div class="cedula">
+                                <div class="cedula-bg"></div>
+                                <div class="cedula-content">
+
+                                    <div class="header-top-republica">
+                                        <strong>REPÚBLICA DEL PERÚ</strong>
+                                        <span>SERVICIO DE REGISTRO CIVIL E IDENTIFICACIÓN</span>
+                                    </div>
+
+                                    <div class="header-left-title">
+                                        <span class="txt-cedula">CÉDULA DE</span>
+                                        <div class="row-identidad">
+                                            <span class="txt-identidad">IDENTIDAD</span>
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cf/Flag_of_Peru.svg" class="flag-icon" alt="PE">
+                                        </div>
+                                    </div>
+
+                                    <div class="cedula-body-layout">
+                                        <div class="photo-area">
+                                            <div class="photo-frame">
+                                                <img id="cedula-foto-principal" src="" class="cedula-photo-main" alt="Foto">
+                                            </div>
+                                        </div>
+
+                                        <div class="data-area-grid">
+                                            <div class="data-item full-width">
+                                                <label>APELLIDOS</label>
+                                                <span id="cedula-apellidos" class="data-value">---</span>
+                                            </div>
+                                            <div class="data-item full-width">
+                                                <label>NOMBRES</label>
+                                                <span id="cedula-nombres" class="data-value">---</span>
+                                            </div>
+                                            <div class="data-item">
+                                                <label>NACIONALIDAD</label>
+                                                <span id="cedula-nacionalidad" class="data-value">PERUANA</span>
+                                            </div>
+                                            <div class="data-item">
+                                                <label>SEXO</label>
+                                                <span id="cedula-sexo" class="data-value">M</span>
+                                            </div>
+                                            <div class="data-item">
+                                                <label>FECHA DE NACIMIENTO</label>
+                                                <span id="cedula-nacimiento" class="data-value">-- --- ----</span>
+                                            </div>
+                                            <div class="data-item">
+                                                <label>NÚMERO DOCUMENTO</label>
+                                                <span id="cedula-num-documento" class="data-value">---</span>
+                                            </div>
+                                            <div class="data-item">
+                                                <label>FECHA DE EMISIÓN</label>
+                                                <span id="cedula-emision" class="data-value">-- --- ----</span>
+                                            </div>
+                                            <div class="data-item">
+                                                <label>FECHA DE VENCIMIENTO</label>
+                                                <span id="cedula-vencimiento" class="data-value">-- --- ----</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="ghost-photo-wrapper">
+                                            <img id="cedula-foto-pequena" src="" class="ghost-img" alt="Ghost">
+                                        </div>
+                                    </div>
+
+                                    <div class="bottom-run">
+                                        <label>RUN</label>
+                                        <span id="cedula-run-text">--.---.---.-</span>
+                                    </div>
+                                    <div class="bottom-firma">
+                                        <label>FIRMA DEL TITULAR</label>
+                                        <div id="cedula-firma" class="firma-font">Firma</div>
+                                    </div>
+                                    <div class="vertical-code">
+                                        <span>I&lt;CHL12345678&lt;&lt;</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Licencias -->
+                    <div class="exp-card exp-card--licenses">
+                        <div class="exp-card-header">
+                            <h3><i class='bx bxs-certification'></i> Licencias Vigentes</h3>
+                        </div>
+                        <div id="licenses-container" class="exp-licenses-list">
+                            <div class="exp-empty">Cargando licencias...</div>
+                        </div>
+                    </div>
+
+                    <!-- Historia del Personaje -->
+                    <div class="exp-card exp-card--historia" id="historia-card">
+                        <div class="exp-card-header hist-header">
+                            <div class="hist-header-left">
+                                <h3><i class='bx bx-book-heart'></i> Historia de tu Personaje</h3>
+                                <p class="hist-subtitle">Información de lore requerida para el Certificado de Nacimiento</p>
+                            </div>
+                            <button class="hist-btn-edit" id="btn-abrir-historia">
+                                <i class='bx bx-edit-alt'></i> Completar
+                            </button>
+                        </div>
+
+                        <!-- Barra de progreso -->
+                        <div class="hist-progress-wrap">
+                            <div class="hist-progress-labels">
+                                <span class="hist-progress-text" id="hist-progress-text">Cargando…</span>
+                                <span class="hist-progress-badge" id="hist-progress-badge">—</span>
+                            </div>
+                            <div class="hist-progress-bar">
+                                <div class="hist-progress-fill" id="hist-progress-fill" style="width:0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Preview de campos -->
+                        <div class="hist-preview-grid" id="hist-preview-grid">
+                            <div class="hist-preview-item" id="prev-padre">
+                                <i class='bx bx-male'></i>
+                                <div><span class="hist-prev-label">Padre</span><span class="hist-prev-val" id="prev-padre-val">—</span></div>
+                            </div>
+                            <div class="hist-preview-item" id="prev-madre">
+                                <i class='bx bx-female'></i>
+                                <div><span class="hist-prev-label">Madre</span><span class="hist-prev-val" id="prev-madre-val">—</span></div>
+                            </div>
+                            <div class="hist-preview-item" id="prev-lugar">
+                                <i class='bx bx-map-pin'></i>
+                                <div><span class="hist-prev-label">Lugar de nacimiento</span><span class="hist-prev-val" id="prev-lugar-val">—</span></div>
+                            </div>
+                            <div class="hist-preview-item" id="prev-hora">
+                                <i class='bx bx-time-five'></i>
+                                <div><span class="hist-prev-label">Hora de nacimiento</span><span class="hist-prev-val" id="prev-hora-val">—</span></div>
+                            </div>
+                            <div class="hist-preview-item" id="prev-sangre">
+                                <i class='bx bx-plus-medical'></i>
+                                <div><span class="hist-prev-label">Tipo de sangre</span><span class="hist-prev-val" id="prev-sangre-val">—</span></div>
+                            </div>
+                            <div class="hist-preview-item" id="prev-civil">
+                                <i class='bx bx-heart'></i>
+                                <div><span class="hist-prev-label">Estado civil</span><span class="hist-prev-val" id="prev-civil-val">—</span></div>
+                            </div>
+                            <div class="hist-preview-item" id="prev-apodo">
+                                <i class='bx bx-user-voice'></i>
+                                <div><span class="hist-prev-label">Apodo / Alias</span><span class="hist-prev-val" id="prev-apodo-val">—</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- --- MODAL HISTORIA DEL PERSONAJE --- -->
+            <div id="modal-historia" class="hist-modal-overlay" style="display:none">
+                <div class="hist-modal-card">
+                    <div class="hist-modal-header">
+                        <div>
+                            <h3><i class='bx bx-book-heart'></i> Historia de tu Personaje</h3>
+                            <p>Los campos marcados con <span style="color:#ef4444">*</span> son necesarios para emitir el Certificado de Nacimiento.</p>
+                        </div>
+                        <button class="hist-modal-close" id="btn-cerrar-historia"><i class='bx bx-x'></i></button>
+                    </div>
+
+                    <div class="hist-modal-body">
+
+                        <!-- -- Sección 1: Estado civil -- -->
+                        <div class="hist-section hist-section--civil">
+                            <div class="hist-section-title">
+                                <i class='bx bx-heart'></i> Estado Civil
+                            </div>
+                            <div class="hist-civil-pills" id="hist-civil-pills">
+                                <button type="button" class="hist-pill" data-val="Soltero/a">Soltero/a</button>
+                                <button type="button" class="hist-pill" data-val="Casado/a">Casado/a</button>
+                                <button type="button" class="hist-pill" data-val="Divorciado/a">Divorciado/a</button>
+                                <button type="button" class="hist-pill" data-val="Viudo/a">Viudo/a</button>
+                                <button type="button" class="hist-pill" data-val="Conviviente Civil">Conv. Civil</button>
+                            </div>
+                            <input type="hidden" id="hist-estado-civil" value="Soltero/a">
+                        </div>
+
+                        <!-- -- Sección 2: Datos requeridos para el certificado -- -->
+                        <div class="hist-section hist-section--required">
+                            <div class="hist-section-title">
+                                <i class='bx bx-certification'></i> Requeridos para el Certificado de Nacimiento
+                            </div>
+                            <div class="hist-form-grid">
+                                <!-- Padre -->
+                                <div class="hist-field-group">
+                                    <label class="hist-label" for="hist-nombre-padre">
+                                        Nombre del Padre <span class="hist-req">*</span>
+                                    </label>
+                                    <input type="text" id="hist-nombre-padre" class="hist-input" placeholder="Ej: Roberto Andrés Muñoz Vega" maxlength="80">
+                                </div>
+                                <!-- Madre -->
+                                <div class="hist-field-group">
+                                    <label class="hist-label" for="hist-nombre-madre">
+                                        Nombre de la Madre <span class="hist-req">*</span>
+                                    </label>
+                                    <input type="text" id="hist-nombre-madre" class="hist-input" placeholder="Ej: Carmen Rosa Lagos Torres" maxlength="80">
+                                </div>
+                                <!-- Lugar de nacimiento -->
+                                <div class="hist-field-group hist-field-group--full">
+                                    <label class="hist-label" for="hist-lugar-nac">
+                                        Lugar de Nacimiento <span class="hist-req">*</span>
+                                    </label>
+                                    <input type="text" id="hist-lugar-nac" class="hist-input" placeholder="Ej: Santiago, Región Metropolitana" maxlength="100">
+                                </div>
+                                <!-- Hora de nacimiento -->
+                                <div class="hist-field-group">
+                                    <label class="hist-label" for="hist-hora-nac">
+                                        Hora de Nacimiento <span class="hist-req">*</span>
+                                    </label>
+                                    <input type="time" id="hist-hora-nac" class="hist-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- -- Sección 3: Datos opcionales -- -->
+                        <div class="hist-section">
+                            <div class="hist-section-title">
+                                <i class='bx bx-star'></i> Datos opcionales
+                            </div>
+                            <div class="hist-form-grid">
+                                <!-- Tipo de sangre -->
+                                <div class="hist-field-group">
+                                    <label class="hist-label" for="hist-sangre">Tipo de Sangre</label>
+                                    <select id="hist-sangre" class="hist-input hist-select">
+                                        <option value="">— No especificado —</option>
+                                        <option>A+</option><option>A-</option>
+                                        <option>B+</option><option>B-</option>
+                                        <option>AB+</option><option>AB-</option>
+                                        <option>O+</option><option>O-</option>
+                                    </select>
+                                </div>
+                                <!-- Apodo -->
+                                <div class="hist-field-group">
+                                    <label class="hist-label" for="hist-apodo">
+                                        Apodo / Alias
+                                        <span class="hist-label-hint">Como te conocen en el RP</span>
+                                    </label>
+                                    <input type="text" id="hist-apodo" class="hist-input" placeholder='Ej: "El Chico", "La Cobra"…' maxlength="40">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alerta de error -->
+                        <div class="hist-modal-alert" id="hist-modal-alert" style="display:none"></div>
+
+                    </div>
+
+                    <div class="hist-modal-footer">
+                        <button class="hist-btn-cancel" id="btn-cancelar-historia">Cancelar</button>
+                        <button class="hist-btn-save" id="btn-guardar-historia">
+                            <i class='bx bx-save'></i> Guardar Historia
+                        </button>
+                    </div>
+                </div>
+            </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="exp-footer">
+        <div class="container exp-footer-shell">
+            <div class="exp-footer-links">
+                <a href="https://docs.google.com/document/d/1WFH9kgpfjGI0SlIENSGEfv3W03AB7YYQcIFDIC13eXQ/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Normativa General</a>
+                <a href="https://discord.gg/perp" target="_blank" rel="noopener noreferrer">Soporte Técnico</a>
+                <a href="https://discord.gg/perp" target="_blank" rel="noopener noreferrer">Discord Oficial</a>
+            </div>
+            <p class="exp-footer-note">Portal y servicios internos desarrollados para <strong class="exp-footer-strong">Peru Roleplay Community</strong>.</p>
+        </div>
+        <div class="exp-footer-watermark" aria-hidden="true">
+            <img src="./img/logoperurp.png" alt="" onerror="this.src='https://i.imgur.com/3mRhMBw.png'">
+        </div>
+    </footer>
+
+    <!-- Notificaciones Panel -->
+    <div class="bnk-modal-overlay hidden" id="notificaciones-modal">
+        <div class="bnk-modal">
+            <div class="bnk-modal-head">
+                <h3><i class='bx bx-bell'></i> Notificaciones</h3>
+                <button class="close-modal-btn" id="btn-close-notif-modal"><i class='bx bx-x'></i></button>
+            </div>
+            <div id="notificaciones-list" class="bnk-notificaciones-list">
+                <div class="bnk-tx-empty">Sin notificaciones</div>
+            </div>
+            <button class="exp-notif-leer-btn" id="btn-leer-notifs" style="margin-top:10px;">Marcar todas como leídas</button>
+        </div>
+    </div>
+
+    <script src="./js/global.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/mis-datos.js"></script>
+</body>
+
+</html>
