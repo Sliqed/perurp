@@ -13,10 +13,12 @@
         .muni-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 1.5rem; transition: transform 0.2s; }
         .muni-card:hover { transform: translateY(-3px); border-color: var(--primary-accent); }
         .muni-icon { font-size: 2.5rem; color: var(--primary-accent); margin-bottom: 1rem; }
-        .muni-card h3 { color: var(--exp-text-bright); margin-bottom: 0.5rem; }
+        .muni-card h3 { color: white; margin-bottom: 0.5rem; font-weight: 800; }
         .muni-card p { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.25rem; }
         .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
         .back-btn:hover { color: var(--primary-accent); }
+        .muni-btn { width: 100%; padding: 0.8rem; background: var(--primary-accent); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .muni-btn:hover { filter: brightness(1.1); }
     </style>
 </head>
 <body class="exp-page">
@@ -37,25 +39,68 @@
                 <div class="muni-icon"><i class='bx bxs-id-card'></i></div>
                 <h3>DNI Electrónico</h3>
                 <p>Renovación y duplicado de tu Documento Nacional de Identidad.</p>
-                <button class="exp-notif-leer-btn" style="width: 100%;">Iniciar Trámite</button>
+                <button class="muni-btn" onclick="muniAction('DNI')">Iniciar Trámite</button>
             </div>
             <div class="muni-card">
                 <div class="muni-icon"><i class='bx bxs-car'></i></div>
                 <h3>Licencia de Conducir</h3>
                 <p>Examen de manejo, renovación de brevete y pago de multas SAT.</p>
-                <button class="exp-notif-leer-btn" style="width: 100%;">Ver Citas</button>
+                <button class="muni-btn" onclick="muniAction('Brevete')">Ver Citas</button>
             </div>
             <div class="muni-card">
                 <div class="muni-icon"><i class='bx bxs-home-circle'></i></div>
                 <h3>Predios y Arbitrios</h3>
                 <p>Gestión de propiedades, títulos de propiedad y pagos municipales.</p>
-                <button class="exp-notif-leer-btn" style="width: 100%;">Mis Predios</button>
+                <button class="muni-btn" onclick="muniAction('Predios')">Mis Predios</button>
             </div>
         </div>
     </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
     <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+        }
+
+        window.muniAction = async (type) => {
+            const cost = type === 'DNI' ? 100 : (type === 'Brevete' ? 500 : 1000);
+            
+            if (confirm(`El trámite de ${type} tiene un costo de $${cost}. ¿Deseas continuar?`)) {
+                const Backend = window.Backend;
+                const users = await Backend.getUsers();
+                const user = users[currentUser];
+
+                if (user.balance < cost) {
+                    return alert('No tienes suficiente dinero para este trámite.');
+                }
+
+                user.balance -= cost;
+                
+                // Si es DNI, podríamos generar una fecha de vencimiento nueva
+                if (type === 'DNI') {
+                    user.dniVencimiento = new Date(Date.now() + 31536000000).toLocaleDateString(); // +1 año
+                }
+
+                await Backend.saveUser(currentUser, user);
+                alert(`¡Trámite de ${type} pagado con éxito! Se han descontado $${cost} de tu cuenta.`);
+                window.location.href = './index.html';
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('header-name').textContent = localStorage.getItem('userName') || 'Ciudadano';
+            setTimeout(updateUI, 500);
         });
     </script>
 </body>

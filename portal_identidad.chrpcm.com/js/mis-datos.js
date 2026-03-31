@@ -10,8 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── LÓGICA DE PERFIL (EL CORAZÓN DEL PORTAL) ──
     const updateProfileUI = async () => {
         const Backend = window.Backend;
-        if (!Backend) return; // Esperar a que cargue
+        if (!Backend) return; 
 
+        await Backend.ensureInitialized();
         const users = await Backend.getUsers();
         const currentUserKey = Backend.getCurrentUserKey();
         const userData = users[currentUserKey];
@@ -37,23 +38,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // 3. Rango y Trabajo
-        const role = userData.role || 'user';
+        // 3. Rango y Trabajo (Soporte para múltiples roles tipo Discord)
+        const currentRoles = await Backend.getRoles();
+        const roles = userData.roles || [userData.role || 'unemployed'];
         const rankEl = $('profile-rank');
         const jobEl = $('profile-job');
         
+        // Mapeo de roles para UI (Usar los del backend si están disponibles)
+        const primaryRoleId = roles.find(r => r !== 'unemployed') || roles[0] || 'unemployed';
+        const primaryRole = currentRoles.find(r => r.id === primaryRoleId) || { name: 'Ciudadano', color: '#64748b', icon: 'bx-user' };
+
         if (rankEl) {
-            rankEl.textContent = role.toUpperCase();
-            rankEl.style.background = role === 'owner' ? '#dc2626' : (role === 'admin' ? '#dc2626' : '#dc2626');
+            rankEl.textContent = primaryRole.name.toUpperCase();
+            rankEl.style.background = primaryRole.color;
         }
         
         if (jobEl) {
-            let jobName = 'Civil';
-            let icon = 'bxs-briefcase';
-            if (role === 'owner') { jobName = 'Propietario'; icon = 'bxs-crown'; }
-            else if (role === 'admin') { jobName = 'Administrador'; icon = 'bxs-shield-quarter'; }
-            else if (role === 'mod') { jobName = 'Moderador'; icon = 'bxs-user-voice'; }
-            jobEl.innerHTML = `<i class='bx ${icon}'></i> ${jobName}`;
+            jobEl.innerHTML = `<i class='bx ${primaryRole.icon.startsWith('bx-') ? primaryRole.icon : 'bx-' + primaryRole.icon}'></i> ${primaryRole.name}`;
         }
 
         // 4. Dinero y Nivel
@@ -68,22 +69,74 @@ document.addEventListener('DOMContentLoaded', () => {
         if (levelEl) levelEl.textContent = userData.level || '1';
         if (levelFill) levelFill.style.width = '15%';
 
-        // 5. Panel de Staff (Desbloqueo)
+        // 5. Desbloqueo de Paneles por Rol
+        const isStaff = roles.includes('owner') || roles.includes('admin') || roles.includes('mod');
+        const isPolice = roles.includes('police');
+        const isMechanic = roles.includes('mechanic');
+
+        // Panel de Staff
         const staffCard = $('staff-panel-card');
         if (staffCard) {
-            if (role === 'owner' || role === 'admin') {
+            if (isStaff) {
                 staffCard.classList.remove('exp-portal--locked');
+                staffCard.href = './admin.html';
                 const label = $('staff-label-text');
                 const lockIcon = $('staff-lock-icon');
-                if (label) label.textContent = 'Acceso concedido (Staff)';
+                if (label) label.textContent = 'Panel de Administración Activo';
                 if (lockIcon) {
-                    lockIcon.classList.remove('bxs-lock-alt');
-                    lockIcon.classList.add('bx-chevron-right');
+                    lockIcon.className = 'bx bx-chevron-right exp-portal-arrow';
                 }
             } else {
                 staffCard.onclick = (e) => {
                     e.preventDefault();
-                    alert('No tienes permisos de Staff.');
+                    alert('Acceso denegado: Se requieren permisos de Staff.');
+                };
+            }
+        }
+
+        // Panel Punto de Desguace (Abierto para todos)
+        const mechanicCard = $('mecanico-ilegal-card');
+        if (mechanicCard) {
+            mechanicCard.classList.remove('exp-portal--locked');
+            mechanicCard.href = './desguace.html';
+            const label = mechanicCard.querySelector('.exp-ilegal-label');
+            if (label) label.textContent = 'Reciclaje y piezas de vehículos';
+            const lockIcon = mechanicCard.querySelector('.exp-portal-arrow');
+            if (lockIcon) {
+                lockIcon.className = 'bx bx-chevron-right exp-portal-arrow';
+            }
+            mechanicCard.onclick = null;
+        }
+
+        // Portales Policiales
+        const policeBtn = $('police-toggle-btn');
+        if (policeBtn) {
+            if (isPolice || isStaff) {
+                policeBtn.classList.remove('exp-portal--locked');
+            } else {
+                policeBtn.onclick = (e) => {
+                    e.preventDefault();
+                    alert('Acceso denegado: Solo personal de la Policía Nacional.');
+                };
+            }
+        }
+
+        // Portal SAMU
+        const samuCard = $('samu-portal-card');
+        if (samuCard) {
+            const isEMS = roles.includes('ems') || isStaff;
+            if (isEMS) {
+                samuCard.classList.remove('exp-portal--locked');
+                const label = $('samu-label-text');
+                const lockIcon = $('samu-lock-icon');
+                if (label) label.textContent = 'Portal Médico Activo';
+                if (lockIcon) {
+                    lockIcon.className = 'bx bx-chevron-right exp-portal-arrow';
+                }
+            } else {
+                samuCard.onclick = (e) => {
+                    e.preventDefault();
+                    alert('Acceso denegado: Se requieren credenciales de SAMU.');
                 };
             }
         }

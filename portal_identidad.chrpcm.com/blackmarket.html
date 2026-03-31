@@ -29,33 +29,79 @@
     <main class="exp-main"><div class="container">
         <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
         <div class="exp-section-title" style="color: #ef4444;"><i class='bx bxs-skull'></i> El Mercado Negro - Red Criminal</div>
-        <div class="bm-grid">
-            <div class="bm-card">
-                <div class="bm-icon"><i class='bx bxs-target-lock'></i></div>
-                <h3>Glock-17</h3>
-                <p>Ligera, fiable y letal. Ideal para defensa personal avanzada.</p>
-                <div class="bm-price">2.5 Bitcoins</div>
-                <button class="exp-notif-leer-btn" style="width: 100%; border-color: #ef4444; color: #ef4444; margin-top: 1rem;">Comprar</button>
-            </div>
-            <div class="bm-card">
-                <div class="bm-icon"><i class='bx bxs-shield-x'></i></div>
-                <h3>Chaleco Pesado</h3>
-                <p>Máxima protección balística contra impactos de alto calibre.</p>
-                <div class="bm-price">1.2 Bitcoins</div>
-                <button class="exp-notif-leer-btn" style="width: 100%; border-color: #ef4444; color: #ef4444; margin-top: 1rem;">Comprar</button>
-            </div>
-            <div class="bm-card">
-                <div class="bm-icon"><i class='bx bxs-capsule'></i></div>
-                <h3>Caja de Munición</h3>
-                <p>50 balas de calibre 9mm. Munición de punta hueca.</p>
-                <div class="bm-price">0.5 Bitcoins</div>
-                <button class="exp-notif-leer-btn" style="width: 100%; border-color: #ef4444; color: #ef4444; margin-top: 1rem;">Comprar</button>
-            </div>
+        <div class="bm-grid" id="bm-list">
+            <!-- Items loaded dynamically -->
+            <div class="exp-empty">Buscando mercancía ilegal...</div>
         </div>
     </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
     <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        const defaultItems = [
+            { id: 'glock', name: 'Glock-17', price: 25000, desc: 'Ligera, fiable y letal. Ideal para defensa personal avanzada.', image: '' },
+            { id: 'vest', name: 'Chaleco Pesado', price: 12000, desc: 'Máxima protección balística contra impactos de alto calibre.', image: '' },
+            { id: 'ammo', name: 'Caja de Munición', price: 5000, desc: '50 balas de calibre 9mm. Munición de punta hueca.', image: '' }
+        ];
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
+            let items = await Backend.getEconomyItems('blackmarket');
+            if (!items.length) {
+                for (const item of defaultItems) await Backend.saveEconomyItem('blackmarket', item);
+                items = defaultItems;
+            }
+
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+
+            const bmList = document.getElementById('bm-list');
+            bmList.innerHTML = items.map(item => `
+                <div class="bm-card">
+                    <div class="bm-icon">
+                        ${item.image ? `<img src="${item.image}" style="width:60px; height:60px; object-fit:contain;">` : `<i class='bx bxs-target-lock'></i>`}
+                    </div>
+                    <h3>${item.name}</h3>
+                    <p>${item.desc || ''}</p>
+                    <div class="bm-price">$ ${item.price.toLocaleString()}</div>
+                    <button class="exp-notif-leer-btn" style="width: 100%; border-color: #ef4444; color: #ef4444; margin-top: 1rem;" onclick="buyIllegal('${item.id}', ${item.price})">Comprar</button>
+                </div>
+            `).join('');
+        }
+
+        async function buyIllegal(id, price) {
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const user = users[currentUser];
+
+            if (user.balance < price) return alert('No tienes suficiente dinero sucio/limpio para esto.');
+
+            if (confirm(`¿Comprar este artículo ilegal por $${price.toLocaleString()}?`)) {
+                user.balance -= price;
+                if (!user.inventory) user.inventory = [];
+                
+                const item = defaultItems.find(i => i.id === id) || { name: 'Item Ilegal' };
+                user.inventory.push({ id: Date.now(), name: item.name });
+
+                await Backend.saveUser(currentUser, user);
+                alert('La transacción se ha completado. Recoge el paquete en el punto de entrega.');
+                updateUI();
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('header-name').textContent = localStorage.getItem('userName') || 'Ciudadano';
+            updateUI();
         });
     </script>
 </body>

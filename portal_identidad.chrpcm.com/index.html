@@ -68,7 +68,10 @@
             <section id="view-resumen" class="exp-view is-active">
 
                 <!-- Profile Hero Simplified -->
-                <div class="exp-profile-hero" style="padding: 2rem; display: flex; align-items: center; justify-content: space-between; background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); margin-bottom: 2rem;">
+                <div class="exp-profile-hero" style="padding: 2rem; display: flex; align-items: center; justify-content: space-between; background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); margin-bottom: 2rem; position: relative;">
+                    <button onclick="window.toggleSettings()" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white; padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 5px;" title="Configuración de Notificaciones">
+                        <i class='bx bx-cog' style="font-size: 1.2rem;"></i> <span style="font-size: 0.8rem; font-weight: 700;">CONFIG</span>
+                    </button>
                     <div style="display: flex; align-items: center; gap: 2rem;">
                         <div class="exp-avatar-frame" id="avatar-container" style="cursor: pointer; width: 100px; height: 100px;" title="Cambiar foto de perfil">
                             <img id="profile-avatar" src="https://i.imgur.com/3mRhMBw.png" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary-accent);">
@@ -209,11 +212,11 @@
                                 </div>
                                 <i class='bx bx-chevron-right exp-portal-arrow'></i>
                             </a>
-                            <a href="" class="exp-portal-card exp-portal--empleos">
+                            <a href="./empleos.html" class="exp-portal-card exp-portal--empleos">
                                 <div class="exp-portal-icon"><i class='bx bx-briefcase-alt-2'></i></div>
                                 <div class="exp-portal-text">
                                     <h3>Centro de Empleos</h3>
-                                    <span>¡En actualizacion!</span>
+                                    <span>Busca trabajo y gana dinero</span>
                                 </div>
                                 <i class='bx bx-chevron-right exp-portal-arrow'></i>
                             </a>
@@ -233,27 +236,35 @@
                                 </div>
                                 <i class='bx bx-chevron-right exp-portal-arrow'></i>
                             </a>
-                            <a href="./desguace.html" class="exp-portal-card exp-portal--desguace">
-                                <div class="exp-portal-icon"><i class='bx bxs-car-garage'></i></div>
+                            <a href="./robo-vehiculos.html" class="exp-portal-card exp-portal--desguace">
+                                <div class="exp-portal-icon"><i class='bx bxs-car-crash'></i></div>
                                 <div class="exp-portal-text">
                                     <h3>Robo de Vehículos</h3>
                                     <span>Desguace y desmantelamiento</span>
                                 </div>
                                 <i class='bx bx-chevron-right exp-portal-arrow'></i>
                             </a>
-                            <a href="./mecanico-ilegal.html" class="exp-portal-card exp-portal--ilegal exp-portal--locked" id="mecanico-ilegal-card">
+                            <a href="./desguace.html" class="exp-portal-card exp-portal--scrap" id="mecanico-ilegal-card">
                                 <div class="exp-portal-icon"><i class='bx bxs-car-crash'></i></div>
                                 <div class="exp-portal-text">
-                                    <h3>El Desguace</h3>
-                                    <span class="exp-ilegal-label">Solo mecánicos ilegales</span>
+                                    <h3>Punto de Desguace</h3>
+                                    <span class="exp-ilegal-label">Reciclaje y piezas de vehículos</span>
                                 </div>
-                                <i class='bx bxs-lock-alt exp-portal-arrow exp-lock-icon-ilegal'></i>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
                             </a>
                             <a href="./911.html" class="exp-portal-card exp-portal--emergencias">
                                 <div class="exp-portal-icon"><i class='bx bxs-phone-call'></i></div>
                                 <div class="exp-portal-text">
                                     <h3>Emergencias 911</h3>
                                     <span>Llamadas de emergencia y asistencia</span>
+                                </div>
+                                <i class='bx bx-chevron-right exp-portal-arrow'></i>
+                            </a>
+                            <a href="./causa-app.html" class="exp-portal-card exp-portal--causa">
+                                <div class="exp-portal-icon"><i class='bx bxs-message-rounded-dots'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>CausaApp</h3>
+                                    <span>Mensajería instantánea y fotos</span>
                                 </div>
                                 <i class='bx bx-chevron-right exp-portal-arrow'></i>
                             </a>
@@ -273,6 +284,14 @@
                                 </div>
                                 <i class='bx bx-chevron-down exp-portal-arrow exp-police-chevron'></i>
                             </button>
+                            <a href="./samu.html" class="exp-portal-card exp-portal--samu" id="samu-portal-card">
+                                <div class="exp-portal-icon"><i class='bx bxs-ambulance'></i></div>
+                                <div class="exp-portal-text">
+                                    <h3>SAMU - Emergencias</h3>
+                                    <span id="samu-label-text">Solo personal médico</span>
+                                </div>
+                                <i class='bx bxs-lock-alt exp-portal-arrow' id="samu-lock-icon"></i>
+                            </a>
                         </div>
 
                         <!-- Police Sub-cards (expandable) -->
@@ -585,10 +604,10 @@
     <!-- Footer -->
     <footer class="exp-footer">
         <div class="container exp-footer-shell">
-            <div class="exp-footer-links">
-                <a href="https://docs.google.com/document/d/1WFH9kgpfjGI0SlIENSGEfv3W03AB7YYQcIFDIC13eXQ/edit?usp=sharing" target="_blank" rel="noopener noreferrer">Normativa General</a>
-                <a href="https://discord.gg/perp" target="_blank" rel="noopener noreferrer">Soporte Técnico</a>
-                <a href="https://discord.gg/perp" target="_blank" rel="noopener noreferrer">Discord Oficial</a>
+            <div class="exp-footer-links" style="position: relative; z-index: 10;">
+                <a href="https://discord.gg/vn7tWbha7g" target="_blank" rel="noopener noreferrer" style="position: relative; z-index: 11;">Normativa General</a>
+                <a href="https://discord.gg/vn7tWbha7g" target="_blank" rel="noopener noreferrer" style="position: relative; z-index: 11;">Soporte Técnico</a>
+                <a href="https://discord.gg/vn7tWbha7g" target="_blank" rel="noopener noreferrer" style="position: relative; z-index: 11;">Discord Oficial</a>
             </div>
             <p class="exp-footer-note">Portal y servicios internos desarrollados para <strong class="exp-footer-strong">Peru Roleplay Community</strong>.</p>
         </div>
@@ -611,11 +630,14 @@
         </div>
     </div>
 
-    <script src="./js/global.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
     <script src="./js/mis-datos.js"></script>
 </body>
 
 </html>
+
+
+

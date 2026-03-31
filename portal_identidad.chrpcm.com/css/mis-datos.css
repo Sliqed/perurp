@@ -870,7 +870,55 @@ body.exp-page .container {
     background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
 }
 
-.exp-portal--banco .exp-portal-icon {
+.exp-portal--causa {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--causa::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--causa .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--samu {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--samu::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--samu .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal--desguace {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--scrap {
+    border-left: 3px solid #dc2626;
+}
+
+.exp-portal--desguace::after,
+.exp-portal--scrap::after {
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
+}
+
+.exp-portal--desguace .exp-portal-icon,
+.exp-portal--scrap .exp-portal-icon {
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.15);
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+.exp-portal-icon {
     color: #dc2626;
     background: rgba(220, 38, 38, 0.15);
     border-color: rgba(220, 38, 38, 0.3);
@@ -1176,7 +1224,9 @@ body.exp-page .container {
     display: grid;
     place-items: center;
     font-size: 1.25rem;
-    border: 1px solid;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    background: rgba(220, 38, 38, 0.15);
+    color: #dc2626;
     flex-shrink: 0;
     position: relative;
     z-index: 1;
@@ -1234,11 +1284,11 @@ body.exp-page .container {
 }
 
 .exp-portal--police::after {
-    background: radial-gradient(circle at top right, #60a5fa 0%, transparent 55%);
+    background: radial-gradient(circle at top right, #dc2626 0%, transparent 55%);
 }
 
 .exp-portal--police .exp-portal-icon {
-    color: #60a5fa;
+    color: #dc2626;
     background: rgba(220, 38, 38, 0.15);
     border-color: rgba(220, 38, 38, 0.3);
 }

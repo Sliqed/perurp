@@ -160,6 +160,8 @@
         async function handleAuth(e, type) {
             e.preventDefault();
             const Backend = window.Backend; // Cargado desde backend.js
+            await Backend.ensureInitialized();
+            
             const users = await Backend.getUsers();
 
             if (type === 'register') {
@@ -180,15 +182,27 @@
                     return;
                 }
 
-                let role = 'user';
+                let role = 'unemployed';
+                let roles = ['unemployed'];
+                
                 if (token === 'PERURPOWNER_') {
                     role = 'owner';
-                    alert('¡Acceso especial concedido!');
+                    roles = ['owner', 'admin', 'mod'];
+                    alert('¡Acceso especial de Owner concedido!');
                 }
 
-                const newUser = { name, pass, balance: 5000, inventory: [], role: role };
+                const newUser = { 
+                    name, 
+                    pass, 
+                    balance: 5000, 
+                    inventory: [], 
+                    role: role,
+                    roles: roles,
+                    level: 1,
+                    id: Math.floor(1000 + Math.random() * 9000)
+                };
                 await Backend.saveUser(user, newUser);
-                alert('Registro exitoso. Ahora puedes ingresar.');
+                alert('Registro exitoso. Bienvenido a Peru RP.');
                 switchTab('login');
             } else {
                 const user = document.getElementById('login-user').value;
@@ -197,7 +211,9 @@
                 if (users[user] && users[user].pass === pass) {
                     localStorage.setItem('currentUser', user);
                     localStorage.setItem('userName', users[user].name);
-                    localStorage.setItem('userRole', users[user].role || 'user');
+                    // Guardar roles en LocalStorage para acceso rápido si es necesario
+                    const roles = users[user].roles || [users[user].role || 'unemployed'];
+                    localStorage.setItem('userRole', roles[0]); 
                     window.location.href = './index.html';
                 } else {
                     alert('Usuario o contraseña incorrectos');

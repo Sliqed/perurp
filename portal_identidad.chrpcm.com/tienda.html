@@ -10,14 +10,20 @@
     <link rel="stylesheet" href="./css/mis-datos.css">
     <style>
         .store-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
-        .store-card { background: var(--dark-surface); border: 1px solid #dc2626; border-radius: var(--exp-radius); padding: 1.5rem; text-align: center; }
+        .store-card { background: var(--dark-surface); border: 1px solid #dc2626; border-radius: var(--exp-radius); padding: 1.5rem; text-align: center; transition: all 0.3s; }
+        .store-card:hover { transform: scale(1.03); box-shadow: 0 0 20px rgba(220, 38, 38, 0.2); }
         .store-badge { background: #dc2626; color: #fff; padding: 4px 12px; border-radius: 4px; font-weight: 800; font-size: 0.75rem; display: inline-block; margin-bottom: 1rem; }
         .store-price { color: #dc2626; font-size: 1.5rem; font-weight: 900; margin: 1rem 0; }
         .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
         .back-btn:hover { color: var(--primary-accent); }
+        .buy-premium-btn { width: 100%; padding: 0.8rem; background: #dc2626; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .buy-premium-btn:hover { background: #b91c1c; }
     </style>
 </head>
 <body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
     <header class="exp-topbar">
         <div class="exp-topbar-inner container">
             <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
@@ -27,36 +33,74 @@
     <main class="exp-main"><div class="container">
         <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
         <div class="exp-section-title"><i class='bx bxs-shopping-bag'></i> Tienda de Artículos Premium</div>
-        <div class="store-grid">
-            <div class="store-card">
-                <span class="store-badge">VIP</span>
-                <div style="font-size: 3rem;"><i class='bx bxs-crown' style="color: #dc2626;"></i></div>
-                <h3>Suscripción VIP</h3>
-                <p>Prioridad en colas, tag exclusivo y más dinero diario.</p>
-                <div class="store-price">$ 9.99 / Mes</div>
-                <button class="exp-notif-leer-btn" style="width: 100%; border-color: #dc2626; color: #dc2626;">Suscribirse</button>
-            </div>
-            <div class="store-card">
-                <span class="store-badge">Item</span>
-                <div style="font-size: 3rem;"><i class='bx bxs-car' style="color: #dc2626;"></i></div>
-                <h3>Garaje Extra</h3>
-                <p>Añade 2 espacios extra a tu garaje personal.</p>
-                <div class="store-price">$ 4.50</div>
-                <button class="exp-notif-leer-btn" style="width: 100%; border-color: #dc2626; color: #dc2626;">Comprar</button>
-            </div>
-            <div class="store-card">
-                <span class="store-badge">Crypto</span>
-                <div style="font-size: 3rem;"><i class='bx bxl-bitcoin' style="color: #dc2626;"></i></div>
-                <h3>Pack Bitcoins</h3>
-                <p>Pack de 50 Bitcoins para usar en el Mercado Negro.</p>
-                <div class="store-price">$ 15.00</div>
-                <button class="exp-notif-leer-btn" style="width: 100%; border-color: #dc2626; color: #dc2626;">Comprar</button>
-            </div>
-        </div>
-    </div></main>
+    <div class="store-grid" id="store-list">
+        <!-- Items loaded dynamically -->
+        <div class="exp-empty">Cargando artículos premium...</div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
     <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        let globalConfig = {};
+
+        const defaultItems = [
+            { id: 'vip', name: 'Suscripción VIP', price: 10, desc: 'Prioridad en colas, tag exclusivo y más dinero diario.', image: '' },
+            { id: 'garage', name: 'Garaje Extra', price: 5, desc: 'Añade 2 espacios extra a tu garaje personal.', image: '' },
+            { id: 'crypto', name: 'Pack Bitcoins', price: 15, desc: 'Pack de 50 Bitcoins para usar en el Mercado Negro.', image: '' }
+        ];
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
+            globalConfig = await Backend.getGlobalConfig();
+            let items = await Backend.getEconomyItems('shop');
+            
+            if (!items.length) {
+                for (const item of defaultItems) await Backend.saveEconomyItem('shop', item);
+                items = defaultItems;
+            }
+
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+
+            const storeList = document.getElementById('store-list');
+            storeList.innerHTML = items.map(item => {
+                const taxRate = globalConfig.taxEnabled ? globalConfig.taxRate : 0;
+                const taxAmount = Math.floor(item.price * (taxRate / 100));
+                const totalPrice = item.price + taxAmount;
+
+                return `
+                <div class="store-card">
+                    <span class="store-badge">PREMIUM</span>
+                    <div style="font-size: 3rem; margin-bottom:1rem;">
+                        ${item.image ? `<img src="${item.image}" style="width:80px; height:80px; object-fit:contain;">` : `<i class='bx bxs-shopping-bag' style="color: #dc2626;"></i>`}
+                    </div>
+                    <h3 style="color: white; font-weight: 800;">${item.name}</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">${item.desc || ''}</p>
+                    <div class="store-price">$ ${totalPrice.toLocaleString()}</div>
+                    ${taxRate > 0 ? `<div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:15px;">Incluye ${taxRate}% IVA ($${taxAmount.toLocaleString()})</div>` : ''}
+                    <button class="buy-premium-btn" onclick="buyPremium('${item.name}', ${totalPrice})">Adquirir Ahora</button>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function buyPremium(name, price) {
+            alert(`Para adquirir ${name} por $${price}, serás redirigido a la pasarela de pago segura. Esta acción requiere saldo en tu cuenta o dinero real dependiendo de la configuración.`);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('header-name').textContent = localStorage.getItem('userName') || 'Ciudadano';
+            updateUI();
         });
     </script>
 </body>

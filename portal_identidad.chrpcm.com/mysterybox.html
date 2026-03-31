@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystery Box | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .mystery-container { display: flex; flex-direction: column; align-items: center; gap: 3rem; margin-top: 4rem; }
+        .box-wrapper { position: relative; width: 250px; height: 250px; cursor: pointer; transition: transform 0.3s; }
+        .box-wrapper:hover { transform: scale(1.05); }
+        .box-img { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle, var(--primary-accent) 0%, transparent 70%); border-radius: 50%; }
+        .box-img i { font-size: 8rem; color: white; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .box-info { text-align: center; max-width: 500px; }
+        .box-title { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 1rem; }
+        .box-desc { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2rem; }
+        .open-btn { padding: 1.2rem 3rem; font-size: 1.2rem; font-weight: 800; background: var(--primary-accent); color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 0 20px rgba(220, 38, 38, 0.4); transition: all 0.3s; }
+        .open-btn:hover { transform: scale(1.1); box-shadow: 0 0 30px rgba(220, 38, 38, 0.6); }
+        .open-btn:disabled { background: #444; cursor: not-allowed; box-shadow: none; }
+        
+        .reward-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .reward-card { background: var(--dark-surface); border: 2px solid var(--primary-accent); padding: 3rem; border-radius: 20px; text-align: center; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .reward-icon { font-size: 5rem; color: var(--primary-accent); margin-bottom: 1.5rem; }
+        .reward-name { font-size: 2rem; font-weight: 800; color: white; margin-bottom: 0.5rem; }
+        .reward-desc { color: var(--text-secondary); margin-bottom: 2rem; }
+        .close-reward-btn { padding: 0.8rem 2rem; background: var(--primary-accent); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div class="exp-section-title"><i class='bx bxs-gift'></i> Mystery Box Semanal</div>
+        
+        <div class="mystery-container">
+            <div class="box-wrapper" onclick="openBox()">
+                <div class="box-img">
+                    <i class='bx bxs-gift'></i>
+                </div>
+            </div>
+            <div class="box-info">
+                <h2 class="box-title">¡Prueba tu suerte!</h2>
+                <p class="box-desc">Cada semana tienes una oportunidad gratuita para abrir una caja misteriosa y ganar premios exclusivos para tu personaje.</p>
+                <button class="open-btn" id="open-btn" onclick="openBox()">Abrir Caja (1 Disponible)</button>
+            </div>
+        </div>
+    </div></main>
+
+    <div id="reward-modal" class="reward-modal">
+        <div class="reward-card">
+            <div class="reward-icon"><i class='bx bxs-star'></i></div>
+            <h3 class="reward-name" id="reward-name">¡Felicidades!</h3>
+            <p class="reward-desc" id="reward-desc">Has ganado algo increíble.</p>
+            <button class="close-reward-btn" onclick="closeReward()">Reclamar Premio</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        const rewards = [
+            { name: '$ 5,000 en Efectivo', desc: 'Se ha depositado directamente en tu cuenta bancaria.', icon: 'bxs-bank', type: 'money', value: 5000 },
+            { name: 'Licencia de Armas', desc: 'Se ha añadido a tus licencias vigentes.', icon: 'bxs-shield', type: 'license', value: 'armas' },
+            { name: 'Vehículo: Albany Primo', desc: 'Lo encontrarás en tu garaje principal.', icon: 'bxs-car', type: 'vehicle', value: 'Albany Primo' },
+            { name: 'Kit de Reparación Pro', desc: 'Añadido a tus pertenencias.', icon: 'bxs-wrench', type: 'item', value: 'repair_kit' }
+        ];
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+        }
+
+        async function openBox() {
+            const btn = document.getElementById('open-btn');
+            btn.disabled = true;
+            btn.textContent = 'Abriendo...';
+
+            // Simulate server-side randomness
+            setTimeout(async () => {
+                const reward = rewards[Math.floor(Math.random() * rewards.length)];
+                
+                document.getElementById('reward-name').textContent = reward.name;
+                document.getElementById('reward-desc').textContent = reward.desc;
+                document.querySelector('.reward-icon i').className = `bx ${reward.icon}`;
+                document.getElementById('reward-modal').style.display = 'flex';
+
+                // Save reward to user profile (logic depends on reward type)
+                const Backend = window.Backend;
+                const users = await Backend.getUsers();
+                const user = users[currentUser];
+
+                if (reward.type === 'money') {
+                    user.balance += reward.value;
+                    if (!user.history) user.history = [];
+                    user.history.push({ date: new Date().toLocaleDateString(), desc: 'Premio Mystery Box', amount: reward.value });
+                } else if (reward.type === 'vehicle') {
+                    if (!user.vehicles) user.vehicles = [];
+                    user.vehicles.push({ id: Date.now(), model: reward.value, plate: 'LUCK-777', boughtAt: new Date().toLocaleDateString() });
+                }
+
+                await Backend.saveUser(currentUser, user);
+            }, 2000);
+        }
+
+        function closeReward() {
+            document.getElementById('reward-modal').style.display = 'none';
+            document.getElementById('open-btn').textContent = 'Vuelve la próxima semana';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateUI, 500);
+        });
+    </script>
+</body>
+</html>

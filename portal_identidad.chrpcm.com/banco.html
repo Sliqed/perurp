@@ -84,6 +84,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
 
     <script>
         const currentUser = localStorage.getItem('currentUser');
@@ -91,6 +92,8 @@
 
         async function updateUI() {
             const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
             const users = await Backend.getUsers();
             const data = users[currentUser];
             if (data) {
@@ -117,11 +120,15 @@
             const target = document.getElementById('target-user').value;
             const amount = parseInt(document.getElementById('transfer-amount').value);
             const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
             const users = await Backend.getUsers();
 
-            if (!users[target]) return alert('El usuario no existe');
+            if (!users[target]) return alert('El usuario no existe. Asegúrate de escribir el Usuario RP exactamente igual.');
             if (amount <= 0 || isNaN(amount)) return alert('Monto inválido');
             if (users[currentUser].balance < amount) return alert('Saldo insuficiente');
+
+            if (target === currentUser) return alert('No puedes enviarte dinero a ti mismo.');
 
             // Procesar transferencia
             users[currentUser].balance -= amount;
@@ -138,20 +145,33 @@
             await Backend.saveUser(currentUser, users[currentUser]);
             await Backend.saveUser(target, users[target]);
             
-            // Notificar al destinatario si es posible
+            // Notificar al destinatario
             await Backend.pushNotification(target, {
                 title: 'Transferencia recibida',
-                message: `Has recibido $${amount.toLocaleString()} de ${currentUser}`
+                message: `Has recibido $${amount.toLocaleString()} de ${currentUser}`,
+                type: 'money'
             });
 
-            alert('Transferencia exitosa');
+            // Notificar al remitente (local)
+            window.showNotification(`Has enviado $${amount.toLocaleString()} a ${target}`, 'success', 'TRANSFERENCIA');
+
+            alert('¡Transferencia exitosa!');
             closeTransfer();
             updateUI();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Esperar un poco a que el Backend se inicialice
-            setTimeout(updateUI, 500);
+            updateUI();
+            
+            // Escuchar cambios en tiempo real
+            setTimeout(() => {
+                const Backend = window.Backend;
+                if (Backend && Backend.isFirebaseEnabled) {
+                    Backend.onUserChange(currentUser, (data) => {
+                        if (data) updateUI();
+                    });
+                }
+            }, 1000);
         });
     </script>
 </body>
