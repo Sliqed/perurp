@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casino Royale | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="./fonts.googleapis.com/css2.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .casino-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .casino-card {
+            background: var(--dark-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--exp-radius);
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .casino-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-accent);
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.15);
+        }
+
+        .casino-icon {
+            font-size: 3rem;
+            color: var(--primary-accent);
+            margin-bottom: 1rem;
+        }
+
+        .casino-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: white;
+            font-weight: 800;
+        }
+
+        .casino-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .casino-btn {
+            background: var(--primary-accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--exp-radius-sm);
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+        }
+
+        .casino-btn:hover {
+            filter: brightness(1.1);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--primary-accent);
+        }
+
+        /* Roulette Game Styles */
+        .game-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 2rem;
+        }
+        .game-content {
+            background: var(--dark-surface);
+            border: 2px solid var(--primary-accent);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            position: relative;
+        }
+        .close-game {
+            position: absolute;
+            top: 1rem; right: 1.5rem;
+            font-size: 2rem;
+            color: #555;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-game:hover { color: white; }
+
+        /* Roulette Wheel */
+        .roulette-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 2rem auto;
+        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid #222;
+            background: conic-gradient(
+                #222 0deg 9.7deg, #dc2626 9.7deg 19.4deg, #222 19.4deg 29.1deg, #dc2626 29.1deg 38.8deg,
+                #222 38.8deg 48.5deg, #dc2626 48.5deg 58.2deg, #222 58.2deg 67.9deg, #dc2626 67.9deg 77.6deg,
+                #222 77.6deg 87.3deg, #dc2626 87.3deg 97deg, #222 97deg 106.7deg, #dc2626 106.7deg 116.4deg,
+                #222 116.4deg 126.1deg, #dc2626 126.1deg 135.8deg, #222 135.8deg 145.5deg, #dc2626 145.5deg 155.2deg,
+                #222 155.2deg 164.9deg, #dc2626 164.9deg 174.6deg, #222 174.6deg 184.3deg, #dc2626 184.3deg 194deg,
+                #222 194deg 203.7deg, #dc2626 203.7deg 213.4deg, #222 213.4deg 223.1deg, #dc2626 223.1deg 232.8deg,
+                #222 232.8deg 242.5deg, #dc2626 242.5deg 252.2deg, #222 252.2deg 261.9deg, #dc2626 261.9deg 271.6deg,
+                #222 271.6deg 281.3deg, #dc2626 281.3deg 291deg, #222 291deg 300.7deg, #dc2626 300.7deg 310.4deg,
+                #222 310.4deg 320.1deg, #dc2626 320.1deg 329.8deg, #222 329.8deg 339.5deg, #dc2626 339.5deg 349.2deg,
+                #059669 349.2deg 360deg
+            );
+            transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1);
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 30px solid var(--primary-accent);
+            z-index: 10;
+        }
+
+        /* Blackjack Styles */
+        .blackjack-table {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            padding: 2rem;
+        }
+        .hand {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            min-height: 120px;
+        }
+        .card {
+            width: 80px;
+            height: 120px;
+            background: white;
+            border-radius: 8px;
+            color: black;
+            display: flex;
+            flex-direction: column;
+            padding: 0.5rem;
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: dealCard 0.3s ease-out;
+        }
+        @keyframes dealCard { from { transform: translateY(-100vh) rotate(20deg); } to { transform: translateY(0) rotate(0); } }
+        .card-red { color: #dc2626; }
+        .score-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .bet-options {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .bet-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid #444;
+            padding: 0.8rem;
+            border-radius: 8px;
+            color: white;
+            width: 120px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="exp-page">
+
+    <!-- BG -->
+    <div class="exp-bg" aria-hidden="true">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.15), transparent 50%), radial-gradient(circle at bottom left, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+        <div class="exp-bg-noise"></div>
+    </div>
+
+    <!-- --- TOPBAR --- -->
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html">
+                <img src="./img/logoperurp.png" alt="Logo Peru RP" onerror="this.src='https://i.imgur.com/3mRhMBw.png'">
+                <span>Peru Roleplay Community</span>
+            </a>
+            <div class="exp-top-actions">
+                <div class="exp-user-pill">
+                    <img id="header-avatar" src="https://i.imgur.com/3mRhMBw.png" alt="">
+                    <span id="header-name">Cargando...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="exp-main">
+        <div class="container">
+            <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver al Expediente</a>
+            
+            <div class="exp-section-title">
+                <i class='bx bxs-diamond'></i> Gran Casino Royale - Lima
+            </div>
+            
+            <div class="casino-grid">
+                <div class="casino-card">
+                    <div class="casino-icon"><i class='bx bx-loader-circle'></i></div>
+                    <h3>Ruleta Europea</h3>
+                    <p>Apuesta a Rojo, Negro o al Cero de la suerte.</p>
+                    <button class="casino-btn" onclick="openGame('roulette')">Jugar Ruleta</button>
+                </div>
+
+                <div class="casino-card">
+                    <div class="casino-icon"><i class='bx bxs-cards'></i></div>
+                    <h3>Blackjack 21</h3>
+                    <p>Vence al crupier y llévate el doble de tu apuesta.</p>
+                    <button class="casino-btn" onclick="openGame('blackjack')">Jugar Blackjack</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Roulette Modal -->
+    <div id="roulette-modal" class="game-modal">
+        <div class="game-content">
+            <span class="close-game" onclick="closeGame('roulette')">&times;</span>
+            <h2 style="color:white; margin:0;">Ruleta Royale</h2>
+            <div class="roulette-container">
+                <div class="pointer"></div>
+                <div class="wheel" id="wheel"></div>
+            </div>
+            <div id="roulette-status" style="color:var(--causa-primary); height: 20px; font-weight: 800; margin-bottom: 1rem;"></div>
+            <div class="bet-options">
+                <input type="number" id="roulette-bet" class="bet-input" placeholder="Apuesta $">
+                <button class="casino-btn" style="width:auto;" onclick="spinRoulette('red')" id="btn-red">Rojo (x2)</button>
+                <button class="casino-btn" style="width:auto; background:#222;" onclick="spinRoulette('black')" id="btn-black">Negro (x2)</button>
+                <button class="casino-btn" style="width:auto; background:#059669;" onclick="spinRoulette('green')" id="btn-green">Cero (x36)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blackjack Modal -->
+    <div id="blackjack-modal" class="game-modal">
+        <div class="game-content">
+            <span class="close-game" onclick="closeGame('blackjack')">&times;</span>
+            <h2 style="color:white; margin:0;">Blackjack Table</h2>
+            <div class="blackjack-table">
+                <div>
+                    <span class="score-badge">Crupier: <span id="dealer-score">0</span></span>
+                    <div class="hand" id="dealer-hand"></div>
+                </div>
+                <div>
+                    <span class="score-badge">Tu Mano: <span id="player-score">0</span></span>
+                    <div class="hand" id="player-hand"></div>
+                </div>
+            </div>
+            <div id="bj-status" style="color:white; font-weight: 800; height: 20px; margin-bottom: 1rem;"></div>
+            <div class="bet-options" id="bj-controls">
+                <input type="number" id="bj-bet" class="bet-input" placeholder="Apuesta $">
+                <button class="casino-btn" style="width:auto;" onclick="startBJ()">Repartir</button>
+            </div>
+            <div class="bet-options" id="bj-actions" style="display:none;">
+                <button class="casino-btn" style="width:auto;" onclick="bjHit()">Pedir Carta</button>
+                <button class="casino-btn" style="width:auto; background:#444;" onclick="bjStand()">Plantarse</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        let userBalance = 0;
+
+        async function updateBalance() {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            const users = await Backend.getUsers();
+            userBalance = users[currentUser].balance;
+            document.getElementById('header-name').textContent = users[currentUser].name;
+        }
+
+        function openGame(game) {
+            document.getElementById(game + '-modal').style.display = 'flex';
+        }
+        function closeGame(game) {
+            document.getElementById(game + '-modal').style.display = 'none';
+        }
+
+        // --- ROULETTE LOGIC ---
+        let spinning = false;
+        async function spinRoulette(color) {
+            if (spinning) return;
+            const bet = parseInt(document.getElementById('roulette-bet').value);
+            if (!bet || bet <= 0 || bet > userBalance) return alert('Apuesta inválida');
+
+            spinning = true;
+            const wheel = document.getElementById('wheel');
+            const status = document.getElementById('roulette-status');
+            status.textContent = 'Girando...';
+
+            // Random rotation (multiple turns + final pos)
+            const randomDeg = Math.floor(Math.random() * 360);
+            const totalDeg = 3600 + randomDeg; // 10 full spins
+            wheel.style.transform = `rotate(${totalDeg}deg)`;
+
+            setTimeout(async () => {
+                spinning = false;
+                wheel.style.transition = 'none';
+                wheel.style.transform = `rotate(${randomDeg}deg)`;
+                setTimeout(() => wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0, 0.1, 1)', 50);
+
+                // Determine result
+                const deg = 360 - (randomDeg % 360);
+                let win = false;
+                let multiplier = 0;
+
+                if (deg >= 349.2) { // Green (0)
+                    if (color === 'green') { win = true; multiplier = 36; }
+                } else {
+                    const isBlack = Math.floor(deg / 9.7) % 2 === 0;
+                    if (isBlack && color === 'black') { win = true; multiplier = 2; }
+                    if (!isBlack && color === 'red') { win = true; multiplier = 2; }
+                }
+
+                const Backend = window.Backend;
+                const users = await Backend.getUsers();
+                const user = users[currentUser];
+
+                if (win) {
+                    const prize = bet * multiplier;
+                    user.balance += (prize - bet);
+                    status.textContent = `¡GANASTE $${prize.toLocaleString()}!`;
+                    status.style.color = '#00ff88';
+                } else {
+                    user.balance -= bet;
+                    status.textContent = `PERDISTE $${bet.toLocaleString()}`;
+                    status.style.color = '#dc2626';
+                }
+
+                await Backend.saveUser(currentUser, user);
+                updateBalance();
+            }, 4000);
+        }
+
+        // --- BLACKJACK LOGIC ---
+        let deck = [];
+        let playerHand = [];
+        let dealerHand = [];
+        let bjBet = 0;
+
+        function createDeck() {
+            const suits = ['♠', '♣', '♥', '♦'];
+            const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+            deck = [];
+            for (let s of suits) {
+                for (let v of values) {
+                    deck.push({ suit: s, value: v, red: (s === '♥' || s === '♦') });
+                }
+            }
+            deck.sort(() => Math.random() - 0.5);
+        }
+
+        function getScore(hand) {
+            let score = 0;
+            let aces = 0;
+            for (let c of hand) {
+                if (c.value === 'A') aces++;
+                else if (['J', 'Q', 'K'].includes(c.value)) score += 10;
+                else score += parseInt(c.value);
+            }
+            for (let i = 0; i < aces; i++) {
+                if (score + 11 <= 21) score += 11;
+                else score += 1;
+            }
+            return score;
+        }
+
+        function renderCard(card, containerId) {
+            const div = document.createElement('div');
+            div.className = `card ${card.red ? 'card-red' : ''}`;
+            div.innerHTML = `<div>${card.value}</div><div style="font-size: 2rem; flex:1; display:flex; align-items:center; justify-content:center;">${card.suit}</div><div style="text-align:right;">${card.value}</div>`;
+            document.getElementById(containerId).appendChild(div);
+        }
+
+        async function startBJ() {
+            bjBet = parseInt(document.getElementById('bj-bet').value);
+            if (!bjBet || bjBet <= 0 || bjBet > userBalance) return alert('Apuesta inválida');
+
+            createDeck();
+            playerHand = [deck.pop(), deck.pop()];
+            dealerHand = [deck.pop()];
+
+            document.getElementById('player-hand').innerHTML = '';
+            document.getElementById('dealer-hand').innerHTML = '';
+            playerHand.forEach(c => renderCard(c, 'player-hand'));
+            dealerHand.forEach(c => renderCard(c, 'dealer-hand'));
+
+            document.getElementById('player-score').textContent = getScore(playerHand);
+            document.getElementById('dealer-score').textContent = getScore(dealerHand);
+
+            document.getElementById('bj-controls').style.display = 'none';
+            document.getElementById('bj-actions').style.display = 'flex';
+            document.getElementById('bj-status').textContent = '¿Pides o te plantas?';
+        }
+
+        function bjHit() {
+            const card = deck.pop();
+            playerHand.push(card);
+            renderCard(card, 'player-hand');
+            const score = getScore(playerHand);
+            document.getElementById('player-score').textContent = score;
+
+            if (score > 21) {
+                endBJ('Crupier gana (Te pasaste)');
+            }
+        }
+
+        async function bjStand() {
+            while (getScore(dealerHand) < 17) {
+                const card = deck.pop();
+                dealerHand.push(card);
+                renderCard(card, 'dealer-hand');
+                document.getElementById('dealer-score').textContent = getScore(dealerHand);
+            }
+
+            const pScore = getScore(playerHand);
+            const dScore = getScore(dealerHand);
+
+            if (dScore > 21 || pScore > dScore) endBJ('¡Tú ganas!');
+            else if (dScore > pScore) endBJ('Crupier gana');
+            else endBJ('Empate (Push)');
+        }
+
+        async function endBJ(result) {
+            document.getElementById('bj-status').textContent = result;
+            document.getElementById('bj-actions').style.display = 'none';
+            document.getElementById('bj-controls').style.display = 'flex';
+
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const user = users[currentUser];
+
+            if (result.includes('gana') && !result.includes('Crupier')) {
+                user.balance += bjBet;
+            } else if (result.includes('Crupier')) {
+                user.balance -= bjBet;
+            }
+
+            await Backend.saveUser(currentUser, user);
+            updateBalance();
+        }
+
+        document.addEventListener('DOMContentLoaded', updateBalance);
+    </script>
+</body>
+
+</html>

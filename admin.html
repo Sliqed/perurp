@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Owner | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <style>
+        :root {
+            --admin-sidebar-w: 240px;
+            --admin-primary: #dc2626;
+            --admin-secondary: #991b1b;
+            --admin-bg: #0a0a0a;
+            --admin-surface: #121212;
+            --admin-border: rgba(255,255,255,0.08);
+        }
+
+        body { background: var(--admin-bg); color: #fff; margin: 0; display: flex; height: 100vh; overflow: hidden; font-family: 'Inter', sans-serif; }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--admin-sidebar-w);
+            background: var(--admin-surface);
+            border-right: 1px solid var(--admin-border);
+            display: flex; flex-direction: column;
+            padding: 1.5rem; flex-shrink: 0;
+        }
+        .sidebar-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; margin-bottom: 2rem; }
+        .sidebar-brand img { width: 32px; }
+        .nav-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+        .nav-item { 
+            padding: 0.8rem 1rem; border-radius: 8px; cursor: pointer; 
+            display: flex; align-items: center; gap: 12px; transition: 0.2s; color: var(--text-secondary);
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .nav-item.active { background: var(--admin-primary); color: #fff; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3); }
+        .nav-item i { font-size: 1.3rem; }
+
+        /* Main Content */
+        .admin-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .admin-header { 
+            height: 70px; border-bottom: 1px solid var(--admin-border); 
+            display: flex; align-items: center; justify-content: space-between; padding: 0 2rem;
+            background: var(--admin-surface);
+        }
+        .admin-main { flex: 1; padding: 2rem; overflow-y: auto; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { 
+            background: var(--admin-surface); border: 1px solid var(--admin-border); 
+            padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 5px;
+        }
+        .stat-val { font-size: 1.8rem; font-weight: 800; color: var(--admin-primary); }
+        .stat-label { font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Table Area */
+        .data-table-container { 
+            background: var(--admin-surface); border: 1px solid var(--admin-border); 
+            border-radius: 12px; overflow: hidden; margin-bottom: 2rem;
+        }
+        .table-header { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--admin-border); }
+        .search-box { 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--admin-border); 
+            padding: 0.6rem 1rem; border-radius: 8px; color: white; width: 300px; outline: none;
+        }
+        .admin-table { width: 100%; border-collapse: collapse; }
+        .admin-table th { text-align: left; padding: 1rem 1.5rem; background: rgba(255,255,255,0.02); font-size: 0.85rem; color: var(--text-secondary); }
+        .admin-table td { padding: 1rem 1.5rem; border-bottom: 1px solid var(--admin-border); font-size: 0.9rem; }
+        
+        /* Badges */
+        .role-badge { 
+            padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; 
+            text-transform: uppercase; display: inline-flex; align-items: center; gap: 5px;
+        }
+
+        /* Actions */
+        .action-btns { display: flex; gap: 8px; }
+        .btn-icon { 
+            width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: 1px solid var(--admin-border); background: rgba(255,255,255,0.03); transition: 0.2s;
+        }
+        .btn-icon:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+        .btn-edit { color: #3b82f6; }
+        .btn-delete { color: #ef4444; }
+        .btn-money { color: #22c55e; }
+
+        /* Modal Redesign */
+        .modal { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-card { 
+            background: var(--admin-surface); border: 1px solid var(--admin-border); 
+            width: 100%; max-width: 500px; border-radius: 16px; padding: 2rem;
+            animation: modalSlide 0.3s ease-out;
+            max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes modalSlide { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .field-group { margin-bottom: 1.5rem; }
+        .field-label { display: block; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .field-input { 
+            width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--admin-border);
+            padding: 0.8rem; border-radius: 8px; color: white; outline: none; transition: 0.2s;
+        }
+        .field-input:focus { border-color: var(--admin-primary); }
+
+        .role-tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .role-tag { 
+            padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; 
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            border: 1px solid var(--admin-border); transition: 0.2s;
+        }
+        .role-tag.selected { border-color: var(--admin-primary); background: var(--admin-primary); }
+
+        /* Tabs display */
+        .admin-section { display: none; }
+        .section-active { display: block; }
+
+        /* Item Grid for economy */
+        .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .item-card { 
+            background: rgba(255,255,255,0.02); border: 1px solid var(--admin-border); 
+            border-radius: 10px; padding: 1rem; position: relative;
+        }
+        .item-img { width: 100%; height: 100px; object-fit: contain; background: rgba(0,0,0,0.2); border-radius: 6px; margin-bottom: 0.5rem; }
+        
+        .tax-toggle { 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 1rem; background: rgba(220, 38, 38, 0.05); border-radius: 8px; border: 1px solid rgba(220, 38, 38, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="./img/logoperurp.png" alt="Logo">
+            <span>Peru RP Admin</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item active" onclick="switchTab('users', this)">
+                <i class='bx bx-group'></i> <span>Ciudadanos</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('roles', this)">
+                <i class='bx bx-shield-quarter'></i> <span>Roles y Sueldos</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('economy', this)">
+                <i class='bx bx-cart'></i> <span>Economía</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('announcements', this)">
+                <i class='bx bx-broadcast'></i> <span>Anuncios</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('config', this)">
+                <i class='bx bx-cog'></i> <span>Configuración</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('requests', this)">
+                <i class='bx bx-list-check'></i> <span>Solicitudes Staff</span>
+            </li>
+        </ul>
+        <div style="margin-top: auto;">
+            <a href="./index.html" class="nav-item" style="text-decoration: none;">
+                <i class='bx bx-log-out'></i> <span>Salir</span>
+            </a>
+        </div>
+    </aside>
+
+    <div class="admin-content">
+        <header class="admin-header">
+            <h2 id="section-title">Gestión de Ciudadanos</h2>
+            <div class="admin-user-info" style="display: flex; align-items: center; gap: 15px;">
+                <span class="role-badge" id="admin-badge-ui" style="background:#dc262622; color:#dc2626; border:1px solid #dc262644;">OWNER</span>
+                <span id="admin-name">Cargando...</span>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <!-- TAB: CIUDADANOS -->
+            <div id="users-tab" class="admin-section section-active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Total Usuarios</span>
+                        <span class="stat-val" id="stat-total-users">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Dinero en Circulación</span>
+                        <span class="stat-val" id="stat-total-money">$0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Personal de Servicio</span>
+                        <span class="stat-val" id="stat-staff">0</span>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <div class="table-header">
+                        <h3>Lista de Ciudadanos</h3>
+                        <input type="text" class="search-box" placeholder="Buscar por nombre o ID..." oninput="filterUsers(this.value)">
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario / ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Roles / Rango</th>
+                                <th>Dinero</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-list-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: ROLES Y SUELDOS -->
+            <div id="roles-tab" class="admin-section">
+                <div class="data-table-container">
+                    <div class="table-header">
+                        <h3>Gestión de Roles y Sueldos</h3>
+                        <button class="auth-btn" style="margin: 0; padding: 8px 15px;" onclick="openRoleModal()">+ Crear Rol</button>
+                    </div>
+                    <div style="padding: 2rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;" id="roles-container">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: ECONOMÍA -->
+            <div id="economy-tab" class="admin-section">
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                    <button class="auth-btn" onclick="switchEconomyTab('dealership', this)">🚗 Concesionario</button>
+                    <button class="auth-btn" style="background:rgba(255,255,255,0.05);" onclick="switchEconomyTab('shop', this)">🛒 Tienda</button>
+                    <button class="auth-btn" style="background:rgba(255,255,255,0.05);" onclick="switchEconomyTab('blackmarket', this)">💀 Mercado Negro</button>
+                </div>
+
+                <div class="data-table-container">
+                    <div class="table-header">
+                        <h3 id="economy-title">Gestión de Concesionario</h3>
+                        <button class="auth-btn" style="margin: 0; padding: 8px 15px;" onclick="openEconomyItemModal()">+ Añadir Item</button>
+                    </div>
+                    <div class="item-grid" id="economy-items-container" style="padding: 1.5rem;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: ANUNCIOS -->
+            <div id="announcements-tab" class="admin-section">
+                <div class="modal-card" style="max-width: 600px; margin: 0 auto;">
+                    <h3>Enviar Anuncio Global</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Este mensaje se enviará a todos los ciudadanos del servidor.</p>
+                    
+                    <div class="field-group">
+                        <label class="field-label">Título del Anuncio</label>
+                        <input type="text" id="ann-title" class="field-input" placeholder="Ej: Mantenimiento Programado">
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Mensaje</label>
+                        <textarea id="ann-message" class="field-input" style="height: 120px; resize: none;" placeholder="Escribe el contenido del anuncio..."></textarea>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label">Tipo de Anuncio</label>
+                        <select id="ann-type" class="field-input">
+                            <option value="info">ℹ️ Información</option>
+                            <option value="warning">⚠️ Advertencia</option>
+                            <option value="emergency">🚨 Emergencia / Policía</option>
+                            <option value="success">✅ Evento / Noticia</option>
+                        </select>
+                    </div>
+                    <button class="auth-btn" style="width: 100%; margin: 0;" onclick="sendAnnouncement()">Enviar a Todo el Servidor</button>
+                </div>
+            </div>
+
+            <!-- TAB: CONFIGURACIÓN -->
+            <div id="config-tab" class="admin-section">
+                <div class="modal-card" style="max-width: 600px; margin: 0 auto;">
+                    <h3>Configuración del Sistema</h3>
+                    
+                    <div class="tax-toggle" style="margin-top: 2rem; margin-bottom: 2rem;">
+                        <div>
+                            <strong style="display:block;">Sistema de IVA (Impuestos)</strong>
+                            <span style="font-size:0.8rem; color:var(--text-secondary);">Aplica un cargo extra a todas las compras</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <input type="checkbox" id="conf-tax-enabled" onchange="toggleTaxInput(this.checked)">
+                            <input type="number" id="conf-tax-rate" class="field-input" style="width:70px; margin:0;" value="18" min="0" max="100"> %
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div class="field-group">
+                            <label class="field-label">Multiplicador de Sueldos (Actual: <span id="val-salary">1.0</span>x)</label>
+                            <input type="range" id="conf-salary" min="0.5" max="5.0" step="0.1" value="1.0" class="field-input" oninput="document.getElementById('val-salary').innerText = this.value">
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label">Límite de Cuentas por IP</label>
+                            <input type="number" id="conf-ip" class="field-input" value="2">
+                        </div>
+                        <div class="field-group" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <label class="field-label">Modo Mantenimiento</label>
+                                <span style="font-size: 0.8rem; color: var(--text-secondary);">Solo Owners pueden entrar</span>
+                            </div>
+                            <input type="checkbox" id="conf-maintenance">
+                        </div>
+                        <button class="auth-btn" style="width: 100%; margin: 0;" onclick="saveConfig()">Guardar Configuración Global</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: SOLICITUDES STAFF -->
+            <div id="requests-tab" class="admin-section">
+                <div class="data-table-container">
+                    <div class="table-header">
+                        <h3>Solicitudes Pendientes (Desguace / Especiales)</h3>
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ciudadano</th>
+                                <th>Solicitud</th>
+                                <th>Detalles</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staff-requests-body">
+                            <tr><td colspan="6" style="text-align:center; padding:2rem;">Cargando solicitudes...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL EDITAR USUARIO -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-card">
+            <h3 id="edit-title">Editar Ciudadano</h3>
+            <div style="margin-top: 1.5rem;">
+                <input type="hidden" id="edit-user-key">
+                <div class="field-group">
+                    <label class="field-label">Nombre Completo</label>
+                    <input type="text" id="edit-name" class="field-input">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Balance Bancario ($)</label>
+                    <input type="number" id="edit-balance" class="field-input">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Roles Asignados</label>
+                    <div id="edit-roles-tags" class="role-tag-container">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button class="field-input" style="flex: 1; cursor: pointer;" onclick="closeModal('edit-modal')">Cancelar</button>
+                    <button class="auth-btn" style="flex: 1; margin: 0;" onclick="saveUserChanges()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ROL -->
+    <div id="role-modal" class="modal">
+        <div class="modal-card">
+            <h3>Gestión de Rol</h3>
+            <div style="margin-top: 1.5rem;">
+                <input type="hidden" id="role-id">
+                <div class="field-group">
+                    <label class="field-label">Nombre del Rol</label>
+                    <input type="text" id="role-name" class="field-input" placeholder="Ej: Policía Nacional">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">ID Único (Sin espacios)</label>
+                    <input type="text" id="role-key" class="field-input" placeholder="ej: police">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Sueldo Diario ($)</label>
+                    <input type="number" id="role-salary" class="field-input" value="0">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Color (Hex)</label>
+                    <div style="display:flex; gap:10px;">
+                        <input type="color" id="role-color" class="field-input" style="width:60px; padding:2px; height:45px;">
+                        <input type="text" id="role-color-text" class="field-input" placeholder="#ffffff">
+                    </div>
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Icono (Boxicons)</label>
+                    <input type="text" id="role-icon" class="field-input" placeholder="shield-alt">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button class="field-input" style="flex: 1; cursor: pointer;" onclick="closeModal('role-modal')">Cancelar</button>
+                    <button class="auth-btn" style="flex: 1; margin: 0;" onclick="saveRole()">Guardar Rol</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ECONOMÍA -->
+    <div id="economy-modal" class="modal">
+        <div class="modal-card">
+            <h3 id="economy-modal-title">Añadir Item</h3>
+            <div style="margin-top: 1.5rem;">
+                <input type="hidden" id="item-id">
+                <div class="field-group">
+                    <label class="field-label">Nombre del Item / Vehículo</label>
+                    <input type="text" id="item-name" class="field-input">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Precio ($)</label>
+                    <input type="number" id="item-price" class="field-input">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Imagen URL</label>
+                    <input type="text" id="item-image" class="field-input" placeholder="https://i.imgur.com/...">
+                </div>
+                <div class="field-group">
+                    <label class="field-label">Descripción / Categoría</label>
+                    <input type="text" id="item-desc" class="field-input">
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button class="field-input" style="flex: 1; cursor: pointer;" onclick="closeModal('economy-modal')">Cancelar</button>
+                    <button class="auth-btn" style="flex: 1; margin: 0;" onclick="saveEconomyItem()">Guardar Item</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="./js/global.js"></script>
+    <script type="module">
+        import Backend from './js/backend.js';
+        
+        let allUsers = {};
+        let currentRoles = [];
+        let currentEconomyCategory = 'dealership';
+
+        const defaultRoles = [
+            { id: 'owner', name: 'Owner', color: '#dc2626', icon: 'crown', salary: 10000 },
+            { id: 'admin', name: 'Administrador', color: '#ef4444', icon: 'shield-alt', salary: 5000 },
+            { id: 'mod', name: 'Moderador', color: '#f59e0b', icon: 'shield', salary: 3000 },
+            { id: 'police', name: 'Policía Nacional', color: '#3b82f6', icon: 'badge-check', salary: 4500 },
+            { id: 'ems', name: 'Médico (SAMU)', color: '#10b981', icon: 'plus-medical', salary: 4000 },
+            { id: 'mechanic', name: 'Mecánico Kenner', color: '#8b5cf6', icon: 'wrench', salary: 3500 },
+            { id: 'unemployed', name: 'Civil / Desempleado', color: '#64748b', icon: 'user', salary: 500 }
+        ];
+
+        window.switchTab = (tab, el) => {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('section-active'));
+            document.getElementById(`${tab}-tab`).classList.add('section-active');
+            
+            const titles = {
+                'users': 'Gestión de Ciudadanos',
+                'roles': 'Roles y Sueldos',
+                'economy': 'Control de Economía',
+                'announcements': 'Anuncios Globales',
+                'config': 'Configuración del Sistema',
+                'requests': 'Solicitudes de Ciudadanos'
+            };
+            document.getElementById('section-title').innerText = titles[tab];
+
+            if (tab === 'users') loadUsers();
+            if (tab === 'roles') loadRoles();
+            if (tab === 'economy') loadEconomy();
+            if (tab === 'config') loadConfig();
+            if (tab === 'requests') loadStaffRequests();
+        };
+
+        // --- SOLICITUDES STAFF ---
+        let requestsUnsubscribe = null;
+        async function loadStaffRequests() {
+            if (requestsUnsubscribe) requestsUnsubscribe();
+            
+            requestsUnsubscribe = await Backend.onRequestsChange('staff', (requests) => {
+                const body = document.getElementById('staff-requests-body');
+                const reqArray = Object.values(requests).reverse();
+                
+                if (reqArray.length === 0) {
+                    body.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-secondary);">No hay solicitudes pendientes</td></tr>';
+                    return;
+                }
+
+                body.innerHTML = reqArray.map(r => `
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <img src="${r.userAvatar}" style="width:30px; height:30px; border-radius:50%;">
+                                <strong>@${r.userKey}</strong>
+                            </div>
+                        </td>
+                        <td><span class="role-badge" style="background:#f59e0b22; color:#f59e0b; border:1px solid #f59e0b44;">${r.serviceName}</span></td>
+                        <td style="font-size:0.8rem; color:var(--text-secondary);">${r.description}</td>
+                        <td style="color:#22c55e; font-weight:700;">$${(r.price || 0).toLocaleString()}</td>
+                        <td>
+                            <span class="role-badge" style="background:${r.status === 'pending' ? '#64748b' : (r.status === 'accepted' ? '#3b82f6' : '#22c55e')}22; color:${r.status === 'pending' ? '#64748b' : (r.status === 'accepted' ? '#3b82f6' : '#22c55e')};">
+                                ${r.status.toUpperCase()}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                ${r.status === 'pending' ? `
+                                    <button class="btn-icon btn-money" onclick="updateStaffReq('${r.id}', 'accepted')" title="Aceptar"><i class='bx bx-check'></i></button>
+                                    <button class="btn-icon btn-delete" onclick="updateStaffReq('${r.id}', 'rejected')" title="Rechazar"><i class='bx bx-x'></i></button>
+                                ` : (r.status === 'accepted' ? `
+                                    <button class="btn-icon btn-money" onclick="updateStaffReq('${r.id}', 'completed')" title="Marcar como Completado"><i class='bx bx-check-double'></i></button>
+                                ` : '<span style="color:var(--text-secondary);">Finalizado</span>')}
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            });
+        }
+
+        window.updateStaffReq = async (id, status) => {
+            const admin = await Backend.getCurrentUser();
+            const adminKey = Backend.getCurrentUserKey();
+            await Backend.updateRequestStatus('staff', id, status, { key: adminKey, name: admin ? admin.name : 'Staff' });
+            if (status === 'completed') alert('Solicitud completada. Se ha realizado el cobro y publicado el entorno.');
+        };
+
+        // --- CIUDADANOS ---
+        async function loadUsers() {
+            allUsers = await Backend.getUsers();
+            const roles = await Backend.getRoles();
+            currentRoles = roles.length ? roles : defaultRoles;
+            renderUsers(allUsers);
+            updateStats();
+        }
+
+        function renderUsers(users) {
+            const list = document.getElementById('users-list-body');
+            list.innerHTML = '';
+            
+            Object.keys(users).forEach(key => {
+                const u = users[key];
+                const userRoles = u.roles || [u.role || 'unemployed'];
+                
+                const rolesHtml = userRoles.map(rId => {
+                    const roleData = currentRoles.find(r => r.id === rId) || { name: rId, color: '#64748b' };
+                    return `<span class="role-badge" style="background: ${roleData.color}22; color: ${roleData.color}; border: 1px solid ${roleData.color}44;">${roleData.name}</span>`;
+                }).join(' ');
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><div style="font-weight:700;">@${key}</div><div style="font-size:0.75rem; color:var(--text-secondary);">ID: ${u.id || 'N/A'}</div></td>
+                    <td>${u.name}</td>
+                    <td><div style="display:flex; flex-wrap:wrap; gap:5px;">${rolesHtml}</div></td>
+                    <td style="color:#22c55e; font-weight:700;">$${(u.balance || 0).toLocaleString()}</td>
+                    <td>
+                        <div class="action-btns">
+                            <div class="btn-icon btn-edit" onclick="openEdit('${key}')"><i class='bx bx-edit-alt'></i></div>
+                            <div class="btn-icon btn-money" onclick="quickMoney('${key}')"><i class='bx bx-dollar'></i></div>
+                            <div class="btn-icon btn-delete" onclick="deleteUser('${key}')"><i class='bx bx-trash'></i></div>
+                        </div>
+                    </td>
+                `;
+                list.appendChild(tr);
+            });
+        }
+
+        function updateStats() {
+            const users = Object.values(allUsers);
+            document.getElementById('stat-total-users').innerText = users.length;
+            const totalMoney = users.reduce((sum, u) => sum + (u.balance || 0), 0);
+            document.getElementById('stat-total-money').innerText = '$' + totalMoney.toLocaleString();
+            const staffCount = users.filter(u => {
+                const roles = u.roles || [u.role];
+                return roles.includes('owner') || roles.includes('admin') || roles.includes('mod');
+            }).length;
+            document.getElementById('stat-staff').innerText = staffCount;
+        }
+
+        window.filterUsers = (val) => {
+            const search = val.toLowerCase();
+            const filtered = {};
+            Object.keys(allUsers).forEach(key => {
+                if (key.toLowerCase().includes(search) || allUsers[key].name.toLowerCase().includes(search)) {
+                    filtered[key] = allUsers[key];
+                }
+            });
+            renderUsers(filtered);
+        };
+
+        // --- EDITAR USUARIO ---
+        let selectedUserRoles = [];
+        window.openEdit = (key) => {
+            const u = allUsers[key];
+            document.getElementById('edit-user-key').value = key;
+            document.getElementById('edit-name').value = u.name;
+            document.getElementById('edit-balance').value = u.balance;
+            selectedUserRoles = u.roles || [u.role || 'unemployed'];
+            renderRoleTags();
+            document.getElementById('edit-modal').style.display = 'flex';
+        };
+
+        function renderRoleTags() {
+            const container = document.getElementById('edit-roles-tags');
+            container.innerHTML = currentRoles.map(role => `
+                <div class="role-tag ${selectedUserRoles.includes(role.id) ? 'selected' : ''}" 
+                     onclick="toggleRoleSelection('${role.id}')">
+                    <i class='bx bx-${role.icon}'></i> ${role.name}
+                </div>
+            `).join('');
+        }
+
+        window.toggleRoleSelection = (roleId) => {
+            if (selectedUserRoles.includes(roleId)) selectedUserRoles = selectedUserRoles.filter(r => r !== roleId);
+            else selectedUserRoles.push(roleId);
+            renderRoleTags();
+        };
+
+        window.saveUserChanges = async () => {
+            const key = document.getElementById('edit-user-key').value;
+            const updatedData = {
+                ...allUsers[key],
+                name: document.getElementById('edit-name').value,
+                balance: parseInt(document.getElementById('edit-balance').value),
+                roles: selectedUserRoles,
+                role: selectedUserRoles[0] || 'unemployed'
+            };
+            await Backend.saveUser(key, updatedData);
+            closeModal('edit-modal');
+            loadUsers();
+        };
+
+        window.quickMoney = async (key) => {
+            const u = allUsers[key];
+            u.balance = (u.balance || 0) + 10000;
+            await Backend.saveUser(key, u);
+            loadUsers();
+        };
+
+        window.deleteUser = async (key) => {
+            if (key === localStorage.getItem('currentUser')) return alert('No puedes eliminarte a ti mismo.');
+            if (confirm(`¿Eliminar a @${key}? Esta acción es irreversible.`)) {
+                await Backend.deleteUser(key);
+                loadUsers();
+            }
+        };
+
+        // --- ROLES ---
+        async function loadRoles() {
+            const roles = await Backend.getRoles();
+            currentRoles = roles.length ? roles : defaultRoles;
+            renderRoles();
+        }
+
+        function renderRoles() {
+            const container = document.getElementById('roles-container');
+            container.innerHTML = currentRoles.map(role => `
+                <div class="stat-card" style="border-left: 4px solid ${role.color};">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <i class='bx bx-${role.icon}' style="font-size:1.5rem; color:${role.color};"></i>
+                        <div class="action-btns">
+                            <div class="btn-icon btn-edit" onclick="openRoleModal('${role.id}')"><i class='bx bx-edit'></i></div>
+                            <div class="btn-icon btn-delete" onclick="deleteRole('${role.id}')"><i class='bx bx-trash'></i></div>
+                        </div>
+                    </div>
+                    <span class="stat-label">Sueldo: $${(role.salary || 0).toLocaleString()}</span>
+                    <span style="font-size:1.2rem; font-weight:700;">${role.name}</span>
+                    <span style="font-size:0.75rem; color:var(--text-secondary);">ID: ${role.id}</span>
+                </div>
+            `).join('');
+        }
+
+        window.openRoleModal = (roleId = null) => {
+            if (roleId) {
+                const role = currentRoles.find(r => r.id === roleId);
+                document.getElementById('role-id').value = role.id;
+                document.getElementById('role-name').value = role.name;
+                document.getElementById('role-key').value = role.id;
+                document.getElementById('role-salary').value = role.salary || 0;
+                document.getElementById('role-color').value = role.color;
+                document.getElementById('role-color-text').value = role.color;
+                document.getElementById('role-icon').value = role.icon;
+            } else {
+                document.getElementById('role-id').value = '';
+                document.getElementById('role-name').value = '';
+                document.getElementById('role-key').value = '';
+                document.getElementById('role-salary').value = 0;
+                document.getElementById('role-color').value = '#ffffff';
+                document.getElementById('role-icon').value = 'user';
+            }
+            document.getElementById('role-modal').style.display = 'flex';
+        };
+
+        window.saveRole = async () => {
+            const roleData = {
+                id: document.getElementById('role-key').value.trim(),
+                name: document.getElementById('role-name').value,
+                salary: parseInt(document.getElementById('role-salary').value),
+                color: document.getElementById('role-color').value,
+                icon: document.getElementById('role-icon').value
+            };
+            if (!roleData.id || !roleData.name) return alert('ID y Nombre requeridos');
+            await Backend.saveRole(roleData);
+            closeModal('role-modal');
+            loadRoles();
+        };
+
+        window.deleteRole = async (roleId) => {
+            if (confirm('¿Eliminar este rol? Los usuarios que lo tengan lo perderán.')) {
+                await Backend.deleteRole(roleId);
+                loadRoles();
+            }
+        };
+
+        // --- ECONOMÍA ---
+        window.switchEconomyTab = (cat, el) => {
+            currentEconomyCategory = cat;
+            document.querySelectorAll('#economy-tab .auth-btn').forEach(b => b.style.background = 'rgba(255,255,255,0.05)');
+            el.style.background = 'var(--admin-primary)';
+            const titles = { dealership: '🚗 Gestión de Concesionario', shop: '🛒 Gestión de Tienda', blackmarket: '💀 Gestión de Mercado Negro' };
+            document.getElementById('economy-title').innerText = titles[cat];
+            loadEconomy();
+        };
+
+        async function loadEconomy() {
+            const items = await Backend.getEconomyItems(currentEconomyCategory);
+            renderEconomy(items);
+        }
+
+        function renderEconomy(items) {
+            const container = document.getElementById('economy-items-container');
+            if (!items.length) {
+                container.innerHTML = '<div class="exp-empty">No hay items en esta categoría.</div>';
+                return;
+            }
+            container.innerHTML = items.map(item => `
+                <div class="item-card">
+                    <img src="${item.image || 'https://i.imgur.com/3mRhMBw.png'}" class="item-img">
+                    <div style="font-weight:700;">${item.name}</div>
+                    <div style="color:#22c55e; font-size:0.9rem;">$${item.price.toLocaleString()}</div>
+                    <div style="font-size:0.7rem; color:var(--text-secondary);">${item.desc || ''}</div>
+                    <div class="action-btns" style="margin-top:10px; justify-content:flex-end;">
+                        <div class="btn-icon btn-edit" onclick="openEconomyItemModal('${item.id}')"><i class='bx bx-edit'></i></div>
+                        <div class="btn-icon btn-delete" onclick="deleteEconomyItem('${item.id}')"><i class='bx bx-trash'></i></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.openEconomyItemModal = (itemId = null) => {
+            document.getElementById('economy-modal-title').innerText = itemId ? 'Editar Item' : 'Añadir Item';
+            if (itemId) {
+                Backend.getEconomyItems(currentEconomyCategory).then(items => {
+                    const item = items.find(i => i.id === itemId);
+                    document.getElementById('item-id').value = item.id;
+                    document.getElementById('item-name').value = item.name;
+                    document.getElementById('item-price').value = item.price;
+                    document.getElementById('item-image').value = item.image;
+                    document.getElementById('item-desc').value = item.desc;
+                });
+            } else {
+                document.getElementById('item-id').value = 'id_' + Date.now();
+                document.getElementById('item-name').value = '';
+                document.getElementById('item-price').value = 0;
+                document.getElementById('item-image').value = '';
+                document.getElementById('item-desc').value = '';
+            }
+            document.getElementById('economy-modal').style.display = 'flex';
+        };
+
+        window.saveEconomyItem = async () => {
+            const itemData = {
+                id: document.getElementById('item-id').value,
+                name: document.getElementById('item-name').value,
+                price: parseInt(document.getElementById('item-price').value),
+                image: document.getElementById('item-image').value,
+                desc: document.getElementById('item-desc').value
+            };
+            await Backend.saveEconomyItem(currentEconomyCategory, itemData);
+            closeModal('economy-modal');
+            loadEconomy();
+        };
+
+        window.deleteEconomyItem = async (itemId) => {
+            if (confirm('¿Eliminar este item?')) {
+                await Backend.deleteEconomyItem(currentEconomyCategory, itemId);
+                loadEconomy();
+            }
+        };
+
+        // --- CONFIG Y OTROS ---
+        async function loadConfig() {
+            const config = await Backend.getGlobalConfig();
+            document.getElementById('conf-salary').value = config.salaryMultiplier || 1.0;
+            document.getElementById('val-salary').innerText = config.salaryMultiplier || 1.0;
+            document.getElementById('conf-ip').value = config.ipLimit || 2;
+            document.getElementById('conf-maintenance').checked = config.maintenance || false;
+            document.getElementById('conf-tax-enabled').checked = config.taxEnabled || false;
+            document.getElementById('conf-tax-rate').value = config.taxRate || 18;
+            toggleTaxInput(config.taxEnabled);
+        }
+
+        window.toggleTaxInput = (enabled) => {
+            document.getElementById('conf-tax-rate').disabled = !enabled;
+            document.getElementById('conf-tax-rate').style.opacity = enabled ? '1' : '0.5';
+        };
+
+        window.saveConfig = async () => {
+            await Backend.setGlobalConfig('salaryMultiplier', parseFloat(document.getElementById('conf-salary').value));
+            await Backend.setGlobalConfig('ipLimit', parseInt(document.getElementById('conf-ip').value));
+            await Backend.setGlobalConfig('maintenance', document.getElementById('conf-maintenance').checked);
+            await Backend.setGlobalConfig('taxEnabled', document.getElementById('conf-tax-enabled').checked);
+            await Backend.setGlobalConfig('taxRate', parseInt(document.getElementById('conf-tax-rate').value));
+            alert('Configuración guardada.');
+        };
+
+        window.sendAnnouncement = async () => {
+            const title = document.getElementById('ann-title').value;
+            const msg = document.getElementById('ann-message').value;
+            const type = document.getElementById('ann-type').value;
+            if (!title || !msg) return alert('Completa los campos');
+            await Backend.sendGlobalAnnouncement(title, msg, type);
+            alert('Anuncio enviado');
+            document.getElementById('ann-title').value = '';
+            document.getElementById('ann-message').value = '';
+        };
+
+        window.closeModal = (id) => document.getElementById(id).style.display = 'none';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await Backend.getCurrentUser();
+            if (!user || (user.role !== 'owner' && user.role !== 'admin')) {
+                window.location.href = './index.html';
+                return;
+            }
+            document.getElementById('admin-name').innerText = user.name;
+            const roles = await Backend.getRoles();
+            if (!roles.length) {
+                for (const r of defaultRoles) await Backend.saveRole(r);
+            }
+            loadUsers();
+        });
+    </script>
+</body>
+</html>

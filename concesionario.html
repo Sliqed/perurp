@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concesionario de Vehículos | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .dealer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .vehicle-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); overflow: hidden; transition: transform 0.3s ease; }
+        .vehicle-card:hover { transform: translateY(-5px); border-color: var(--primary-accent); }
+        .vehicle-img { width: 100%; height: 180px; background: #1a1a2e; display: flex; align-items: center; justify-content: center; position: relative; }
+        .vehicle-img i { font-size: 4rem; color: var(--text-secondary); opacity: 0.3; }
+        .vehicle-info { padding: 1.5rem; }
+        .vehicle-name { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 0.5rem; }
+        .vehicle-price { font-size: 1.5rem; font-weight: 800; color: var(--primary-accent); margin-bottom: 1rem; }
+        .vehicle-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .stat-item { font-size: 0.85rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem; }
+        .stat-item i { color: var(--primary-accent); }
+        .buy-btn { width: 100%; padding: 0.8rem; border-radius: 8px; font-weight: 700; background: var(--primary-accent); color: white; border: none; cursor: pointer; transition: filter 0.2s; }
+        .buy-btn:hover { filter: brightness(1.1); }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div class="exp-section-title"><i class='bx bxs-car'></i> Concesionario Oficial de Lima</div>
+        
+        <div class="dealer-grid" id="vehicle-list">
+            <!-- Vehicles will be loaded here -->
+            <div class="exp-empty">Cargando catálogo de vehículos...</div>
+        </div>
+    </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        let currentVehicles = [];
+        let globalConfig = {};
+
+        const defaultVehicles = [
+            { id: 'sedan1', name: 'Albany Primo', price: 15000, desc: 'Sedán • 140 km/h • 4 Asientos', image: '' },
+            { id: 'sport1', name: 'Bravado Banshee', price: 85000, desc: 'Deportivo • 210 km/h • 2 Asientos', image: '' },
+            { id: 'suv1', name: 'Gallivanter Baller', price: 45000, desc: 'SUV • 160 km/h • 4 Asientos', image: '' }
+        ];
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
+            globalConfig = await Backend.getGlobalConfig();
+            currentVehicles = await Backend.getEconomyItems('dealership');
+            
+            // Si no hay vehículos en el backend, usar los default y guardarlos (primera vez)
+            if (!currentVehicles.length) {
+                for (const v of defaultVehicles) await Backend.saveEconomyItem('dealership', v);
+                currentVehicles = defaultVehicles;
+            }
+
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+
+            const vehicleList = document.getElementById('vehicle-list');
+            vehicleList.innerHTML = currentVehicles.map(v => {
+                const taxRate = globalConfig.taxEnabled ? globalConfig.taxRate : 0;
+                const taxAmount = Math.floor(v.price * (taxRate / 100));
+                const totalPrice = v.price + taxAmount;
+
+                return `
+                <div class="vehicle-card">
+                    <div class="vehicle-img">
+                        ${v.image ? `<img src="${v.image}" style="width:100%; height:100%; object-fit:cover;">` : `<i class='bx bxs-car'></i>`}
+                    </div>
+                    <div class="vehicle-info">
+                        <div class="vehicle-name">${v.name}</div>
+                        <div class="vehicle-price">$ ${totalPrice.toLocaleString()}</div>
+                        ${taxRate > 0 ? `<div style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:10px;">Incluye ${taxRate}% de IVA ($${taxAmount.toLocaleString()})</div>` : ''}
+                        <div class="vehicle-stats" style="margin-bottom:1.5rem;">
+                            <div style="font-size:0.85rem; color:var(--text-secondary);"><i class='bx bx-info-circle'></i> ${v.desc || 'Sin descripción'}</div>
+                        </div>
+                        <button class="buy-btn" onclick="buyVehicle('${v.id}', ${totalPrice})">Comprar Vehículo</button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        async function buyVehicle(id, totalPrice) {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
+            const users = await Backend.getUsers();
+            const user = users[currentUser];
+
+            if (user.balance < totalPrice) {
+                return alert('No tienes suficiente dinero en el banco');
+            }
+
+            const vehicle = currentVehicles.find(v => v.id === id);
+            if (confirm(`¿Comprar ${vehicle.name} por $${totalPrice.toLocaleString()}?`)) {
+                user.balance -= totalPrice;
+                if (!user.vehicles) user.vehicles = [];
+                
+                user.vehicles.push({
+                    id: Date.now(),
+                    model: vehicle.name,
+                    plate: Math.random().toString(36).substring(2, 8).toUpperCase(),
+                    boughtAt: new Date().toLocaleDateString()
+                });
+
+                if (!user.history) user.history = [];
+                user.history.push({
+                    date: new Date().toLocaleDateString(),
+                    desc: `Compra de vehículo: ${vehicle.name} (IVA incl.)`,
+                    amount: -totalPrice
+                });
+
+                await Backend.saveUser(currentUser, user);
+                alert('¡Felicidades! Has comprado un nuevo vehículo.');
+                updateUI();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
+    </script>
+</body>
+</html>

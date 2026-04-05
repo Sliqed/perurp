@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taller Kenner | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .kenner-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; }
+        .kenner-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 2rem; position: relative; }
+        .kenner-title { font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.8rem; }
+        .kenner-title i { color: #facc15; }
+        .service-list { display: flex; flex-direction: column; gap: 1rem; }
+        .service-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid var(--border-color); transition: all 0.2s; }
+        .service-item:hover { border-color: #facc15; background: rgba(250, 204, 21, 0.05); }
+        .service-info { display: flex; align-items: center; gap: 1rem; }
+        .service-icon { font-size: 1.5rem; color: #facc15; }
+        .service-name { font-weight: 700; color: white; }
+        .service-price { color: #059669; font-weight: 800; }
+        .request-btn { padding: 0.6rem 1.2rem; background: #facc15; color: #000; border: none; border-radius: 6px; font-weight: 800; cursor: pointer; transition: all 0.2s; }
+        .request-btn:hover { background: #eab308; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+
+        /* Panel de Mecánico */
+        .mechanic-panel { margin-top: 3rem; display: none; }
+        .req-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem; }
+        .req-card { 
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); 
+            padding: 1.5rem; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .req-user { display: flex; align-items: center; gap: 15px; }
+        .req-avatar { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #facc15; }
+        .req-details h4 { margin: 0; color: white; }
+        .req-details span { font-size: 0.8rem; color: var(--text-secondary); }
+        .req-actions { display: flex; gap: 10px; }
+        .btn-action { padding: 8px 15px; border-radius: 6px; font-weight: 700; cursor: pointer; border: none; transition: 0.2s; }
+        .btn-accept { background: #059669; color: white; }
+        .btn-reject { background: #dc2626; color: white; }
+        .btn-complete { background: #3b82f6; color: white; }
+        
+        .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .status-pending { background: #facc1522; color: #facc15; border: 1px solid #facc1544; }
+        .status-accepted { background: #05966922; color: #059669; border: 1px solid #05966944; }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(250, 204, 21, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img id="header-avatar" src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        
+        <div id="citizen-view">
+            <div class="exp-section-title"><i class='bx bxs-wrench'></i> Taller Kenner - Central Mecánica</div>
+            <div class="kenner-grid">
+                <div class="kenner-card">
+                    <div class="kenner-title"><i class='bx bxs-cog'></i> Servicios Rápidos</div>
+                    <div class="service-list">
+                        <div class="service-item">
+                            <div class="service-info">
+                                <i class='bx bxs-car-crash service-icon'></i>
+                                <span class="service-name">Reparación de Motor</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                                <span class="service-price">$ 2,500</span>
+                                <button class="request-btn" onclick="requestService('Reparación de Motor', 2500)">Pedir</button>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-info">
+                                <i class='bx bxs-droplet service-icon'></i>
+                                <span class="service-name">Cambio de Aceite</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                                <span class="service-price">$ 800</span>
+                                <button class="request-btn" onclick="requestService('Cambio de Aceite', 800)">Pedir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="kenner-card">
+                    <div class="kenner-title"><i class='bx bxs-shield-alt-2'></i> Blindaje y Seguridad</div>
+                    <div class="service-list">
+                        <div class="service-item">
+                            <div class="service-info">
+                                <i class='bx bxs-lock-alt service-icon'></i>
+                                <span class="service-name">Refuerzo de Chasis</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                                <span class="service-price">$ 15,000</span>
+                                <button class="request-btn" onclick="requestService('Refuerzo de Chasis', 15000)">Pedir</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL ESPECIAL PARA MECÁNICOS -->
+        <div id="mechanic-view" class="mechanic-panel">
+            <div class="exp-section-title"><i class='bx bxs-briefcase'></i> Panel de Gestión Mecánica</div>
+            <div class="kenner-card" style="width: 100%;">
+                <div class="kenner-title"><i class='bx bx-list-ul'></i> Solicitudes de Reparación en Tiempo Real</div>
+                <div id="requests-list" class="req-list">
+                    <div class="exp-empty">No hay solicitudes pendientes en este momento.</div>
+                </div>
+            </div>
+        </div>
+
+    </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="./js/global.js"></script>
+    <script type="module">
+        import Backend from './js/backend.js';
+
+        const currentUserKey = localStorage.getItem('currentUser');
+        let userData = null;
+
+        async function init() {
+            await Backend.ensureInitialized();
+            userData = await Backend.getCurrentUser();
+            if (!userData) return window.location.href = './auth.html';
+
+            document.getElementById('header-name').textContent = userData.name;
+            if (userData.avatarUrl) document.getElementById('header-avatar').src = userData.avatarUrl;
+
+            const roles = userData.roles || [userData.role];
+            const isMechanic = roles.includes('mechanic') || roles.includes('owner') || roles.includes('admin');
+
+            if (isMechanic) {
+                document.getElementById('mechanic-view').style.display = 'block';
+                loadMechanicRequests();
+            }
+        }
+
+        window.requestService = async (serviceName, price) => {
+            const req = {
+                userKey: currentUserKey,
+                userName: userData.name,
+                userAvatar: userData.avatarUrl || 'https://i.imgur.com/3mRhMBw.png',
+                serviceName: serviceName,
+                price: price
+            };
+
+            await Backend.sendServiceRequest('mechanic', req);
+            alert(`Has solicitado ${serviceName}. Espera a que un mecánico acepte tu solicitud.`);
+        };
+
+        async function loadMechanicRequests() {
+            Backend.onRequestsChange('mechanic', (requests) => {
+                const list = document.getElementById('requests-list');
+                const reqArray = Object.values(requests).reverse(); // Mostrar más recientes primero
+
+                if (reqArray.length === 0) {
+                    list.innerHTML = '<div class="exp-empty">No hay solicitudes pendientes.</div>';
+                    return;
+                }
+
+                list.innerHTML = reqArray.map(r => {
+                    const statusClass = `status-${r.status}`;
+                    const time = new Date(r.timestamp).toLocaleTimeString();
+                    
+                    let actionsHtml = '';
+                    if (r.status === 'pending') {
+                        actionsHtml = `
+                            <button class="btn-action btn-accept" onclick="updateStatus('${r.id}', 'accepted')">Aceptar</button>
+                            <button class="btn-action btn-reject" onclick="updateStatus('${r.id}', 'rejected')">Rechazar</button>
+                        `;
+                    } else if (r.status === 'accepted') {
+                        actionsHtml = `
+                            <button class="btn-action btn-complete" onclick="updateStatus('${r.id}', 'completed')">Completar y Cobrar</button>
+                        `;
+                    }
+
+                    return `
+                        <div class="req-card">
+                            <div class="req-user">
+                                <img src="${r.userAvatar}" class="req-avatar">
+                                <div class="req-details">
+                                    <h4>${r.userName}</h4>
+                                    <span>Solicitó: <strong>${r.serviceName}</strong> • ${time}</span>
+                                    <div style="margin-top:5px;"><span class="status-pill ${statusClass}">${r.status}</span></div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight:800; color:#059669; font-size:1.2rem; margin-bottom:10px;">$${r.price.toLocaleString()}</div>
+                                <div class="req-actions">
+                                    ${actionsHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
+        window.updateStatus = async (reqId, newStatus) => {
+            const roles = userData.roles || [userData.role];
+            const isAuthorized = roles.includes('mechanic') || roles.includes('owner') || roles.includes('admin');
+
+            if (!isAuthorized) {
+                alert('Acceso denegado: No tienes el rango necesario para realizar esta acción.');
+                return;
+            }
+
+            const workerData = {
+                key: currentUserKey,
+                name: userData.name
+            };
+
+            await Backend.updateRequestStatus('mechanic', reqId, newStatus, workerData);
+            
+            if (newStatus === 'completed') {
+                alert('Reparación completada. Se ha enviado la notificación al cliente.');
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

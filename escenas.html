@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escenas de Rol | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .scenes-container { display: grid; grid-template-columns: 1fr 300px; gap: 1.5rem; margin-top: 2rem; height: calc(100vh - 250px); }
+        .chat-area { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); display: flex; flex-direction: column; overflow: hidden; }
+        .chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .chat-messages { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+        .message { max-width: 80%; padding: 0.8rem 1rem; border-radius: 12px; font-size: 0.95rem; line-height: 1.4; }
+        .message-ic { background: rgba(220, 38, 38, 0.1); border: 1px solid rgba(220, 38, 38, 0.2); align-self: flex-start; }
+        .message-me { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); align-self: flex-end; }
+        .message-user { font-weight: 800; font-size: 0.75rem; display: block; margin-bottom: 0.3rem; color: var(--primary-accent); }
+        .chat-input-area { padding: 1.5rem; border-top: 1px solid var(--border-color); display: flex; gap: 1rem; }
+        .chat-input { flex: 1; padding: 0.8rem 1.2rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 8px; color: white; outline: none; }
+        .send-btn { padding: 0 1.5rem; background: var(--primary-accent); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+        .scenes-sidebar { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 1.5rem; overflow-y: auto; }
+        .scene-item { padding: 0.8rem; border-radius: 8px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; margin-bottom: 0.5rem; }
+        .scene-item:hover { background: rgba(255,255,255,0.05); }
+        .scene-item.active { background: rgba(220, 38, 38, 0.1); border-color: var(--primary-accent); }
+        .scene-title { display: block; font-weight: 700; color: white; }
+        .scene-players { font-size: 0.75rem; color: var(--text-secondary); }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div class="exp-section-title"><i class='bx bxs-video-recording'></i> Escenas de Roleplay en Vivo</div>
+        
+        <div class="scenes-container">
+            <div class="chat-area">
+                <div class="chat-header">
+                    <h3 id="active-scene-name">Cargando escena...</h3>
+                    <span id="active-scene-count" style="font-size: 0.8rem; color: var(--text-secondary);"></span>
+                </div>
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Messages will be loaded here -->
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" class="chat-input" placeholder="Escribe un mensaje IC...">
+                    <button class="send-btn" onclick="sendMessage()">Enviar</button>
+                </div>
+            </div>
+            <div class="scenes-sidebar">
+                <h4 style="margin-bottom: 1rem; color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase;">Escenarios Activos</h4>
+                <div id="scene-list">
+                    <!-- Scenes will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        let activeSceneId = null;
+        let currentChatUnsubscribe = null;
+        let scenes = [];
+        let isOwner = false;
+
+        async function initScenes() {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+                const roles = data.roles || [data.role];
+                isOwner = roles.includes('owner');
+            }
+
+            scenes = await Backend.getScenes();
+            renderSceneList();
+            
+            if (scenes.length > 0) {
+                selectScene(scenes[0].id);
+            }
+        }
+
+        function renderSceneList() {
+            const sceneList = document.getElementById('scene-list');
+            sceneList.innerHTML = scenes.map(s => `
+                <div class="scene-item ${s.id === activeSceneId ? 'active' : ''}" onclick="selectScene('${s.id}')">
+                    <span class="scene-title">${s.name}</span>
+                    <span class="scene-players">Escena activa</span>
+                </div>
+            `).join('');
+        }
+
+        async function selectScene(id) {
+            const Backend = window.Backend;
+            activeSceneId = id;
+            const scene = scenes.find(s => s.id === id);
+            
+            document.getElementById('active-scene-name').textContent = scene.name;
+            renderSceneList();
+
+            // Limpiar chat anterior y suscribirse al nuevo
+            if (currentChatUnsubscribe) currentChatUnsubscribe();
+            
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = '<div class="exp-empty">Cargando mensajes...</div>';
+
+            currentChatUnsubscribe = await Backend.onSceneChatChange(id, (messages) => {
+                renderMessages(messages);
+            });
+        }
+
+        function renderMessages(messages) {
+            const chatMessages = document.getElementById('chat-messages');
+            
+            if (messages.length === 0) {
+                chatMessages.innerHTML = '<div class="exp-empty">No hay mensajes en esta escena. ¡Empieza el rol!</div>';
+                return;
+            }
+
+            chatMessages.innerHTML = messages.map(m => `
+                <div class="message ${m.userKey === currentUser ? 'message-me' : 'message-ic'}">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                        <span class="message-user">${m.userName} ${m.userKey === currentUser ? '(Tú)' : ''}</span>
+                        ${isOwner ? `<i class='bx bx-trash' style="color: #ef4444; cursor: pointer; font-size: 0.8rem;" onclick="deleteMsg('${m.id}', '${m.firebaseKey || ''}')"></i>` : ''}
+                    </div>
+                    ${m.content}
+                </div>
+            `).join('');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function deleteMsg(id, firebaseKey) {
+            if (!confirm('¿Borrar este mensaje?')) return;
+            await window.Backend.deleteSceneMessage(activeSceneId, id, firebaseKey);
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message || !activeSceneId) return;
+
+            await window.Backend.sendSceneMessage(activeSceneId, currentUser, message);
+            input.value = '';
+        }
+
+        document.getElementById('chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        document.addEventListener('DOMContentLoaded', initScenes);
+    </script>
+</body>
+</html>

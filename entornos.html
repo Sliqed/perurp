@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entornos RP | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .entornos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .entorno-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 1.5rem; position: relative; overflow: hidden; }
+        .entorno-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .entorno-user { display: flex; align-items: center; gap: 0.5rem; }
+        .entorno-user img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--primary-accent); }
+        .entorno-user-name { font-weight: 700; color: white; font-size: 0.9rem; }
+        .entorno-time { font-size: 0.75rem; color: var(--text-secondary); }
+        .entorno-content { font-size: 0.95rem; color: #e2e8f0; line-height: 1.5; margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--primary-accent); }
+        .entorno-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1rem; }
+        .entorno-location { font-size: 0.8rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.3rem; }
+        .entorno-location i { color: var(--primary-accent); }
+        .entorno-actions { display: flex; gap: 1rem; }
+        .entorno-action-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; transition: color 0.2s; }
+        .entorno-action-btn:hover { color: var(--primary-accent); }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+        .post-entorno-btn { padding: 0.8rem 1.5rem; background: var(--primary-accent); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="exp-section-title"><i class='bx bxs-cctv'></i> Registro de Entornos</div>
+            <button class="post-entorno-btn" onclick="openPostModal()"><i class='bx bx-plus'></i> Nuevo Entorno</button>
+        </div>
+        
+        <div class="entornos-grid" id="entorno-list">
+            <!-- Entornos will be loaded here -->
+            <div class="exp-empty">Cargando registros de entorno...</div>
+        </div>
+    </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        let currentUnsubscribe = null;
+        let isOwner = false;
+
+        async function initEntornos() {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+                const roles = data.roles || [data.role];
+                isOwner = roles.includes('owner');
+            }
+
+            // Escuchar cambios en entornos
+            if (currentUnsubscribe) currentUnsubscribe();
+            currentUnsubscribe = await Backend.onEntornosChange((data) => {
+                renderEntornos(data);
+            });
+        }
+
+        function renderEntornos(entornos) {
+            const entornoList = document.getElementById('entorno-list');
+            
+            if (entornos.length === 0) {
+                entornoList.innerHTML = `<div class="exp-empty">No hay registros de entorno aún.</div>`;
+                return;
+            }
+
+            entornoList.innerHTML = entornos.map(e => {
+                const isCreator = e.userKey === currentUser;
+                const canDelete = isOwner || isCreator;
+                
+                return `
+                <div class="entorno-card">
+                    <div class="entorno-header">
+                        <div class="entorno-user">
+                            <img src="${e.userAvatar || 'https://i.imgur.com/3mRhMBw.png'}" alt="" onerror="this.src='https://i.imgur.com/3mRhMBw.png'">
+                            <div>
+                                <div class="entorno-user-name">${e.userName}</div>
+                                <div class="entorno-time">${new Date(e.timestamp).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <div class="entorno-location">
+                            <i class='bx bxs-map'></i> ${e.location}
+                            ${canDelete ? `<button class="entorno-action-btn" style="color: #ef4444; margin-left: 10px;" onclick="deleteEntorno('${e.id}', '${e.firebaseKey || ''}')" title="${isOwner ? 'Borrar como Owner' : 'Borrar mi entorno'}"><i class='bx bx-trash'></i></button>` : ''}
+                        </div>
+                    </div>
+                    <div class="entorno-content">${e.content}</div>
+                    <div class="entorno-footer">
+                        <div class="entorno-actions">
+                            <button class="entorno-action-btn" onclick="likeEntorno('${e.id}')"><i class='bx bx-heart'></i> ${e.likes || 0}</button>
+                            <button class="entorno-action-btn" onclick="commentEntorno('${e.id}')"><i class='bx bx-comment'></i> Comentar</button>
+                        </div>
+                        <button class="entorno-action-btn" onclick="reportEntorno('${e.id}')"><i class='bx bx-flag'></i></button>
+                    </div>
+                </div>
+            `;
+            }).join('');
+        }
+
+        async function deleteEntorno(id, firebaseKey) {
+            if (!confirm('¿Estás seguro de que deseas borrar este entorno?')) return;
+            await window.Backend.deleteEntorno(id, firebaseKey);
+            alert('Entorno borrado.');
+        }
+
+        async function openPostModal() {
+            const location = prompt('Ubicación del entorno:');
+            if (!location) return;
+            const content = prompt('Descripción del entorno:');
+            if (!content) return;
+
+            await window.Backend.postEntorno(currentUser, location, content);
+            alert('Entorno registrado correctamente.');
+        }
+
+        function likeEntorno(id) { alert('Próximamente: Sistema de likes persistentes'); }
+        function commentEntorno(id) { alert('Próximamente: Sistema de comentarios'); }
+        function reportEntorno(id) { alert('Has reportado este entorno a la administración.'); }
+
+        document.addEventListener('DOMContentLoaded', initEntornos);
+    </script>
+</body>
+</html>

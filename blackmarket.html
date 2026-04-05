@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado Negro | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .bm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .bm-card { background: #000; border: 1px dashed var(--primary-accent); border-radius: var(--exp-radius); padding: 1.5rem; text-align: center; }
+        .bm-icon { font-size: 3rem; color: #ef4444; margin-bottom: 1rem; }
+        .bm-card h3 { color: #ef4444; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .bm-card p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.5rem; }
+        .bm-price { color: #dc2626; font-weight: 800; font-size: 1.25rem; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+    </style>
+</head>
+<body class="exp-page" style="background: radial-gradient(circle at center, #1a0000 0%, #000 100%);">
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div class="exp-section-title" style="color: #ef4444;"><i class='bx bxs-skull'></i> El Mercado Negro - Red Criminal</div>
+        <div class="bm-grid" id="bm-list">
+            <!-- Items loaded dynamically -->
+            <div class="exp-empty">Buscando mercancía ilegal...</div>
+        </div>
+    </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        const defaultItems = [
+            { id: 'glock', name: 'Glock-17', price: 25000, desc: 'Ligera, fiable y letal. Ideal para defensa personal avanzada.', image: '' },
+            { id: 'vest', name: 'Chaleco Pesado', price: 12000, desc: 'Máxima protección balística contra impactos de alto calibre.', image: '' },
+            { id: 'ammo', name: 'Caja de Munición', price: 5000, desc: '50 balas de calibre 9mm. Munición de punta hueca.', image: '' }
+        ];
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
+            let items = await Backend.getEconomyItems('blackmarket');
+            if (!items.length) {
+                for (const item of defaultItems) await Backend.saveEconomyItem('blackmarket', item);
+                items = defaultItems;
+            }
+
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+
+            const bmList = document.getElementById('bm-list');
+            bmList.innerHTML = items.map(item => `
+                <div class="bm-card">
+                    <div class="bm-icon">
+                        ${item.image ? `<img src="${item.image}" style="width:60px; height:60px; object-fit:contain;">` : `<i class='bx bxs-target-lock'></i>`}
+                    </div>
+                    <h3>${item.name}</h3>
+                    <p>${item.desc || ''}</p>
+                    <div class="bm-price">$ ${item.price.toLocaleString()}</div>
+                    <button class="exp-notif-leer-btn" style="width: 100%; border-color: #ef4444; color: #ef4444; margin-top: 1rem;" onclick="buyIllegal('${item.id}', ${item.price})">Comprar</button>
+                </div>
+            `).join('');
+        }
+
+        async function buyIllegal(id, price) {
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const user = users[currentUser];
+
+            if (user.balance < price) return alert('No tienes suficiente dinero sucio/limpio para esto.');
+
+            if (confirm(`¿Comprar este artículo ilegal por $${price.toLocaleString()}?`)) {
+                user.balance -= price;
+                if (!user.inventory) user.inventory = [];
+                
+                const item = defaultItems.find(i => i.id === id) || { name: 'Item Ilegal' };
+                user.inventory.push({ id: Date.now(), name: item.name });
+
+                await Backend.saveUser(currentUser, user);
+                alert('La transacción se ha completado. Recoge el paquete en el punto de entrega.');
+                updateUI();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
+    </script>
+</body>
+</html>

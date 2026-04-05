@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Empresas | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .company-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .company-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 1.5rem; position: relative; }
+        .company-status { position: absolute; top: 1rem; right: 1rem; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .status-active { background: #059669; color: white; }
+        .company-name { font-size: 1.4rem; font-weight: 800; color: white; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+        .company-owner { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem; }
+        .company-stats { display: flex; gap: 1.5rem; margin: 1.5rem 0; border-top: 1px solid var(--border-color); padding-top: 1rem; }
+        .company-stat-item { flex: 1; }
+        .company-stat-item span { display: block; font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; }
+        .company-stat-item strong { display: block; font-size: 1.1rem; color: var(--primary-accent); }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+        .action-btn { padding: 0.6rem; border-radius: 6px; font-weight: 700; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); color: white; cursor: pointer; transition: all 0.2s; }
+        .action-btn:hover { background: var(--primary-accent); border-color: var(--primary-accent); }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+        .create-btn { padding: 1rem 2rem; background: var(--primary-accent); color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; margin-top: 2rem; }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="exp-section-title"><i class='bx bxs-buildings'></i> Registro de Empresas</div>
+            <button class="create-btn" onclick="openCreateModal()"><i class='bx bx-plus'></i> Registrar Empresa</button>
+        </div>
+        
+        <div class="company-grid" id="company-list">
+            <!-- Companies will be loaded here -->
+            <div class="exp-empty">Cargando empresas registradas...</div>
+        </div>
+    </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        const companies = [
+            { id: 1, name: 'Burger Shot', owner: 'Juan_Perez', employees: 12, balance: 250000, type: 'Comida' },
+            { id: 2, name: 'Taller Los Santos', owner: 'Pedro_Gomez', employees: 5, balance: 180000, type: 'Mecánico' },
+            { id: 3, name: 'Vanilla Unicorn', owner: 'Maria_Rodriguez', employees: 20, balance: 450000, type: 'Ocio' },
+            { id: 4, name: 'Taxi Lima 24/7', owner: 'Carlos_Soto', employees: 15, balance: 120000, type: 'Transporte' }
+        ];
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+
+            const companyList = document.getElementById('company-list');
+            companyList.innerHTML = companies.map(c => `
+                <div class="company-card">
+                    <span class="company-status status-active">Activa</span>
+                    <div class="company-name"><i class='bx bxs-briefcase'></i> ${c.name}</div>
+                    <div class="company-owner">Dueño: ${c.owner}</div>
+                    <div class="company-stats">
+                        <div class="company-stat-item">
+                            <span>Empleados</span>
+                            <strong>${c.employees}</strong>
+                        </div>
+                        <div class="company-stat-item">
+                            <span>Capital</span>
+                            <strong>$ ${c.balance.toLocaleString()}</strong>
+                        </div>
+                        <div class="company-stat-item">
+                            <span>Rubro</span>
+                            <strong>${c.type}</strong>
+                        </div>
+                    </div>
+                    <div class="action-btns">
+                        <button class="action-btn" onclick="viewDetails(${c.id})">Detalles</button>
+                        <button class="action-btn" onclick="applyJob(${c.id})">Postular</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewDetails(id) { alert('Próximamente: Panel detallado de la empresa ' + id); }
+        function applyJob(id) { alert('Tu solicitud de empleo ha sido enviada al dueño de la empresa.'); }
+        function openCreateModal() { alert('Para registrar una empresa debes hablar con un encargado de la Municipalidad en el juego.'); }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateUI, 500);
+        });
+    </script>
+</body>
+</html>

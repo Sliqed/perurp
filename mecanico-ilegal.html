@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Desguace Clandestino | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .clandestine-container { max-width: 900px; margin: 3rem auto; }
+        .clandestine-card { background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 15px; padding: 3rem; position: relative; border-left: 5px solid #ff0055; box-shadow: 0 10px 30px rgba(255, 0, 85, 0.1); }
+        .clandestine-title { font-size: 2.2rem; font-weight: 900; color: #ff0055; margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; text-transform: uppercase; letter-spacing: 2px; }
+        .clandestine-desc { font-size: 1.1rem; color: #666; margin-bottom: 3rem; border-bottom: 1px solid #222; padding-bottom: 1.5rem; }
+        .illegal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+        .illegal-item { padding: 1.5rem; background: #111; border: 1px solid #222; border-radius: 12px; transition: all 0.3s; }
+        .illegal-item:hover { border-color: #ff0055; transform: scale(1.02); }
+        .illegal-icon { font-size: 2.5rem; color: #ff0055; margin-bottom: 1rem; }
+        .illegal-name { font-size: 1.2rem; font-weight: 800; color: white; margin-bottom: 0.5rem; }
+        .illegal-price { font-size: 1.4rem; font-weight: 900; color: #ff0055; margin-bottom: 1rem; }
+        .illegal-btn { width: 100%; padding: 0.8rem; background: #ff0055; color: white; border: none; border-radius: 8px; font-weight: 800; cursor: pointer; transition: all 0.2s; }
+        .illegal-btn:hover { background: #cc0044; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: #444; text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: #ff0055; }
+        .warning-label { position: absolute; top: 1.5rem; right: 1.5rem; color: #ff0055; font-size: 0.7rem; font-weight: 900; border: 1px solid #ff0055; padding: 4px 8px; border-radius: 4px; }
+    </style>
+</head>
+<body class="exp-page" style="background: #000;">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(255, 0, 85, 0.05), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar" style="background: rgba(0,0,0,0.8); border-bottom: 1px solid #111;">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill" style="background: #111;"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        
+        <div class="clandestine-container">
+            <div class="clandestine-card">
+                <span class="warning-label">SÓLO PERSONAL AUTORIZADO</span>
+                <div class="clandestine-title"><i class='bx bxs-car-crash'></i> El Desguace</div>
+                <p class="clandestine-desc">Modificaciones prohibidas, cambio de matrículas y desmantelamiento de piezas de alta gama. Lo que pasa aquí, se queda aquí.</p>
+                
+                <div class="illegal-grid">
+                    <div class="illegal-item">
+                        <i class='bx bxs-rename illegal-icon'></i>
+                        <div class="illegal-name">Cambio de Matrícula</div>
+                        <div class="illegal-price">$ 50,000</div>
+                        <button class="illegal-btn" onclick="illegalAction('Cambio de Matrícula')">Ejecutar</button>
+                    </div>
+                    <div class="illegal-item">
+                        <i class='bx bxs-tachometer illegal-icon'></i>
+                        <div class="illegal-name">Eliminar Limitador</div>
+                        <div class="illegal-price">$ 35,000</div>
+                        <button class="illegal-btn" onclick="illegalAction('Eliminar Limitador')">Ejecutar</button>
+                    </div>
+                    <div class="illegal-item">
+                        <i class='bx bxs-bullseye illegal-icon'></i>
+                        <div class="illegal-name">Pintura Indetectable</div>
+                        <div class="illegal-price">$ 80,000</div>
+                        <button class="illegal-btn" onclick="illegalAction('Pintura Indetectable')">Ejecutar</button>
+                    </div>
+                    <div class="illegal-item">
+                        <i class='bx bxs-microchip illegal-icon'></i>
+                        <div class="illegal-name">Hackeo de Centralita</div>
+                        <div class="illegal-price">$ 120,000</div>
+                        <button class="illegal-btn" onclick="illegalAction('Hackeo de Centralita')">Ejecutar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+        }
+
+        function illegalAction(name) {
+            alert(`Peligro: Has iniciado una operación de ${name}. Asegúrate de que no haya patrullas cerca.`);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateUI, 500);
+        });
+    </script>
+</body>
+</html>

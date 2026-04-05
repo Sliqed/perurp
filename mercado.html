@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mercado de Lima | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .market-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 1.25rem; transition: all 0.2s; }
+        .market-card:hover { transform: translateY(-5px); border-color: var(--primary-accent); }
+        .market-price { color: var(--primary-accent); font-weight: 800; font-size: 1.5rem; margin: 0.5rem 0; }
+        .market-img { width: 100%; height: 150px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--text-secondary); }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+        .buy-btn { width: 100%; padding: 0.8rem; background: var(--primary-accent); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 1rem; }
+        .buy-btn:hover { filter: brightness(1.1); }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div class="exp-section-title"><i class='bx bxs-store-alt'></i> Mercado de Artículos Usados</div>
+        <div class="market-grid">
+            <div class="market-card">
+                <div class="market-img"><i class='bx bx-mobile-alt'></i></div>
+                <h4 style="color: white; font-weight: 800;">iPhone 15 Pro</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Casi nuevo, liberado para Claro/Movistar.</p>
+                <div class="market-price">$ 4,500</div>
+                <button class="buy-btn" onclick="buyItem('iPhone 15 Pro', 4500)">Comprar</button>
+            </div>
+            <div class="market-card">
+                <div class="market-img"><i class='bx bx-joystick'></i></div>
+                <h4 style="color: white; font-weight: 800;">PlayStation 5</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Edición digital con 2 mandos.</p>
+                <div class="market-price">$ 2,800</div>
+                <button class="buy-btn" onclick="buyItem('PlayStation 5', 2800)">Comprar</button>
+            </div>
+            <div class="market-card">
+                <div class="market-img"><i class='bx bx-camera'></i></div>
+                <h4 style="color: white; font-weight: 800;">Cámara Sony Alpha</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Perfecta para fotógrafos de prensa.</p>
+                <div class="market-price">$ 3,200</div>
+                <button class="buy-btn" onclick="buyItem('Cámara Sony Alpha', 3200)">Comprar</button>
+            </div>
+        </div>
+    </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+        }
+
+        async function buyItem(name, price) {
+            const Backend = window.Backend;
+            await Backend.ensureInitialized();
+            
+            const users = await Backend.getUsers();
+            const user = users[currentUser];
+
+            if (user.balance < price) {
+                return alert('No tienes suficiente dinero en el banco');
+            }
+
+            if (confirm(`¿Estás seguro de comprar ${name} por $${price.toLocaleString()}?`)) {
+                user.balance -= price;
+                if (!user.inventory) user.inventory = [];
+                user.inventory.push({ name, date: new Date().toLocaleDateString() });
+
+                if (!user.history) user.history = [];
+                user.history.push({ date: new Date().toLocaleDateString(), desc: `Compra en Mercado: ${name}`, amount: -price });
+
+                await Backend.saveUser(currentUser, user);
+                alert('¡Compra exitosa! El artículo ha sido añadido a tus pertenencias.');
+                updateUI();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
+    </script>
+</body>
+</html>

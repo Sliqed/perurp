@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Empleos | Peru Roleplay Community</title>
+    <link rel="icon" type="image/png" href="./img/logoperurp.png">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/mis-datos.css">
+    <style>
+        .jobs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .job-card { background: var(--dark-surface); border: 1px solid var(--border-color); border-radius: var(--exp-radius); padding: 1.5rem; transition: all 0.2s; position: relative; }
+        .job-card:hover { border-color: var(--primary-accent); transform: translateY(-3px); }
+        .job-icon { width: 50px; height: 50px; background: rgba(220, 38, 38, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+        .job-icon i { font-size: 1.8rem; color: var(--primary-accent); }
+        .job-title { font-size: 1.25rem; font-weight: 800; color: white; margin-bottom: 0.5rem; }
+        .job-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 1.5rem; height: 3.5rem; overflow: hidden; }
+        .job-salary { display: flex; align-items: center; gap: 0.5rem; color: #059669; font-weight: 700; font-size: 0.95rem; margin-bottom: 1.5rem; }
+        .apply-btn { width: 100%; padding: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 8px; color: white; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .apply-btn:hover { background: var(--primary-accent); border-color: var(--primary-accent); }
+        .job-badge { position: absolute; top: 1.5rem; right: 1.5rem; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; background: #3b82f6; color: white; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; font-weight: 600; }
+        .back-btn:hover { color: var(--primary-accent); }
+    </style>
+</head>
+<body class="exp-page">
+    <div class="exp-bg">
+        <div class="exp-bg-gradient" style="background: radial-gradient(circle at top right, rgba(220, 38, 38, 0.1), transparent 50%);"></div>
+    </div>
+    <header class="exp-topbar">
+        <div class="exp-topbar-inner container">
+            <a class="exp-brand" href="./index.html"><img src="./img/logoperurp.png" alt="Logo"><span>Peru RP Community</span></a>
+            <div class="exp-user-pill"><img src="https://i.imgur.com/3mRhMBw.png" alt=""><span id="header-name">Cargando...</span></div>
+        </div>
+    </header>
+    <main class="exp-main"><div class="container">
+        <a href="./index.html" class="back-btn"><i class='bx bx-left-arrow-alt'></i> Volver</a>
+        <div class="exp-section-title"><i class='bx bx-briefcase-alt-2'></i> Bolsa de Empleo Municipal</div>
+        
+        <div class="jobs-grid" id="job-list">
+            <!-- Jobs will be loaded here -->
+            <div class="exp-empty">Buscando vacantes disponibles...</div>
+        </div>
+    </div></main>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script type="module" src="./js/backend.js"></script>
+    <script src="./js/global.js"></script>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) window.location.href = './auth.html';
+
+        const jobs = [
+            { id: 1, title: 'Basurero Municipal', desc: 'Recoge los desechos de la ciudad y mantén las calles limpias.', salary: '$ 2,500 / ruta', icon: 'bx-trash', type: 'Público', role: 'unemployed' },
+            { id: 2, title: 'Repartidor de Pizza', desc: 'Entrega pizzas calientes a domicilio por toda la ciudad de Lima.', salary: '$ 1,200 / hora', icon: 'bx-cycling', type: 'Privado', role: 'unemployed' },
+            { id: 3, title: 'Minero Artesanal', desc: 'Extrae minerales valiosos en las minas del norte. Trabajo pesado.', salary: '$ 5,000 / entrega', icon: 'bx-pickaxe', type: 'Público', role: 'unemployed' },
+            { id: 4, title: 'Camionero de Carga', desc: 'Transporta mercancías entre almacenes. Requiere licencia A.', salary: '$ 3,500 / viaje', icon: 'bx-truck', type: 'Privado', role: 'unemployed' },
+            { id: 5, title: 'Pescador del Callao', desc: 'Pesca en alta mar y vende tus capturas en el muelle.', salary: '$ 2,000 / carga', icon: 'bx-anchor', type: 'Privado', role: 'unemployed' },
+            { id: 6, title: 'Taxista de Lima', desc: 'Lleva a los ciudadanos a su destino con seguridad y rapidez.', salary: '$ 3,000 / turno', icon: 'bx-taxi', type: 'Público', role: 'unemployed' },
+            { id: 7, title: 'Mecánico de Kenner', desc: 'Repara vehículos y personaliza coches en el taller oficial.', salary: '$ 4,500 / turno', icon: 'bx-wrench', type: 'Oficial', role: 'mechanic' },
+            { id: 8, title: 'Policía Nacional', desc: 'Protege a la ciudadanía y mantén el orden público.', salary: '$ 6,000 / turno', icon: 'bx-shield-alt-2', type: 'Oficial', role: 'police' },
+            { id: 9, title: 'Médico (SAMU)', desc: 'Salva vidas y atiende emergencias médicas en toda la ciudad.', salary: '$ 5,500 / turno', icon: 'bx-plus-medical', type: 'Oficial', role: 'ems' }
+        ];
+
+        async function updateUI() {
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const data = users[currentUser];
+            if (data) {
+                document.getElementById('header-name').textContent = data.name;
+            }
+
+            const jobList = document.getElementById('job-list');
+            jobList.innerHTML = jobs.map(j => `
+                <div class="job-card">
+                    <span class="job-badge" style="background: ${j.type === 'Oficial' ? '#dc2626' : '#3b82f6'}">${j.type}</span>
+                    <div class="job-icon"><i class='bx ${j.icon}'></i></div>
+                    <div class="job-title">${j.title}</div>
+                    <div class="job-desc">${j.desc}</div>
+                    <div class="job-salary"><i class='bx bx-money'></i> ${j.salary}</div>
+                    <button class="apply-btn" onclick="applyJob('${j.title}', '${j.role}')">Postular a este Empleo</button>
+                </div>
+            `).join('');
+        }
+
+        window.applyJob = async (title, roleId) => {
+            const Backend = window.Backend;
+            const users = await Backend.getUsers();
+            const userData = users[currentUser];
+            
+            if (!userData) return;
+
+            // Actualizar roles (Sistema Discord)
+            if (!userData.roles) userData.roles = ['unemployed'];
+            
+            // Si es un trabajo oficial, añadimos el rol si no lo tiene
+            if (roleId !== 'unemployed') {
+                if (!userData.roles.includes(roleId)) {
+                    userData.roles.push(roleId);
+                }
+                userData.role = roleId; // Principal
+            } else {
+                // Si es civil, mantenemos los roles especiales pero el principal es desempleado
+                userData.role = 'unemployed';
+            }
+
+            await Backend.saveUser(currentUser, userData);
+            alert(`¡Felicidades! Ahora eres ${title}. Dirígete al punto marcado en el GPS del juego para comenzar.`);
+            window.location.href = './index.html';
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateUI, 500);
+        });
+    </script>
+</body>
+</html>
